@@ -1,0 +1,149 @@
+import { Callout } from 'nextra/components'
+
+# APIを使用してフィーチャーフラグを取得する
+
+このドキュメントでは、対象のSDKが利用できない場合に、サーバーから直接フィーチャーフラグを取得するための包括的なガイドを提供します。
+
+評価サーバーでは、クライアントサイドとサーバーサイドの両方のプラットフォームに対応したフィーチャーフラグを簡単に取得するための2つのAPIが提供されています。
+
+クライアントサイドSDKとサーバーサイドSDKの違いは次のとおりです：
+
+* クライアントサイドSDKは単一のユーザー向けですが、サーバーサイドSDKは複数のユーザー向けです。
+* クライアントサイドSDKはすべてのフラグの評価に評価サーバーを利用しますが、サーバーサイドSDKはフラグをローカルで評価します。
+
+<Callout type="info" emoji="ℹ️">
+APIリクエストの`{Host}`を、環境に適したホストURLに置き換える必要があることに注意してください。`{Host}`は評価サーバーホストまたはFeatBit Agentホストのいずれかであり、どちらも同じAPIを提供します。
+</Callout>
+
+## クライアントサイド
+
+クライアントサイドのリクエストでは、 `Authorization`ヘッダーにクライアント環境のシークレットを指定します。
+
+**リクエスト**
+
+```bash
+curl -X POST {Host}/api/public/sdk/client/latest-all \
+-H 'Content-Type: application/json' \
+-H 'Authorization: client-env-secret' \
+-d '{
+    "keyId": "bot-id",
+    "name": "bot",
+    "customizedProperties": [
+        {
+            "name": "level",
+            "value": "high"
+        },
+        {
+            "name": "localtion",
+            "value": "us"
+        }
+    ]
+}'
+```
+
+**レスポンス**
+
+```json
+[
+    {
+       "id":"hello-world",
+       "variation":"true",
+       "variationType":"boolean"
+    }
+]
+```
+
+## サーバーサイド
+
+サーバーサイドのリクエストでは、 `Authorization`ヘッダーにサーバー環境のシークレットを指定します。
+
+**リクエスト**
+
+```bash
+curl -H "Authorization: server-env-secret" {Host}/api/public/sdk/server/latest-all
+```
+
+**レスポンス**
+
+```json
+{
+   "messageType":"data-sync",
+   "data":{
+      "eventType":"full",
+      "featureFlags":[
+         {
+            "envId":"1331554d-98c4-41fe-ade4-68e6f5eeb54a",
+            "name":"hello world",
+            "key":"hello-world",
+            "variationType":"boolean",
+            "variations":[
+               {
+                  "id":"bbe8f444-090e-4a3b-99fa-b487bab424aa",
+                  "value":"true"
+               },
+               {
+                  "id":"cf8f9626-0d6f-4d05-a98f-8c3a50c85d0f",
+                  "value":"false"
+               }
+            ],
+            "targetUsers":[
+               
+            ],
+            "rules":[
+               
+            ],
+            "isEnabled":true,
+            "disabledVariationId":"cf8f9626-0d6f-4d05-a98f-8c3a50c85d0f",
+            "fallthrough":{
+               "dispatchKey":null,
+               "includedInExpt":true,
+               "variations":[
+                  {
+                     "id":"bbe8f444-090e-4a3b-99fa-b487bab424aa",
+                     "rollout":[
+                        0,
+                        1
+                     ],
+                     "exptRollout":1
+                  }
+               ]
+            },
+            "exptIncludeAllTargets":true,
+            "tags":[
+               
+            ],
+            "isArchived":false,
+            "disabledVariation":{
+               "id":"cf8f9626-0d6f-4d05-a98f-8c3a50c85d0f",
+               "value":"false"
+            },
+            "creatorId":"b58fa8fd-eca2-460a-ab0f-e7758dbcec6a",
+            "updatorId":"b58fa8fd-eca2-460a-ab0f-e7758dbcec6a",
+            "createdAt":"2023-03-16T09:11:23.739Z",
+            "updatedAt":"2023-03-16T09:11:26.0465535Z",
+            "id":"4daca70f-86ae-4468-aee8-afc700977202"
+         }
+      ],
+      "segments":[
+         {
+            "envId":"1331554d-98c4-41fe-ade4-68e6f5eeb54a",
+            "name":"beta users",
+            "description":"this is a segment for beta users",
+            "included":[
+               
+            ],
+            "excluded":[
+               
+            ],
+            "rules":[
+               
+            ],
+            "isArchived":false,
+            "createdAt":"2023-03-16T09:18:21.1317917Z",
+            "updatedAt":"2023-03-16T09:18:21.1317248Z",
+            "id":"b2b91bbe-5d54-4d8a-882f-afc700995b23"
+         }
+      ]
+   }
+}
+```

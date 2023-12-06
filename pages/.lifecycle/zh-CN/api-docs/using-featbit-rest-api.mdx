@@ -1,0 +1,142 @@
+import { Callout } from 'nextra/components'
+
+# 使用 FeatBit REST API
+
+### 概述 <a href="#overview" id="overview"></a>
+
+本指南介绍如何开始使用 FeatBit REST API。它描述了如何创建API访问令牌、发出请求和处理响应。它介绍了常见的用例，并帮助您熟悉 FeatBit API 文档。
+
+FeatBit REST API 是与 FeatBit 用户界面（UI）交互的程序化替代方案。您可以使用 FeatBit API 执行 flags 列表中的任何操作，包括创建和操作 flags。例如，REST API 经常用于切换功能标志、更新段和构建自定义集成。
+
+> 使用 FeatBit SDK 评估 flags
+>
+> 我们不建议在应用程序代码中使用 REST API 评估功能标志。为此，请使用 FeatBit SDK。SDK 包含诸如标志值缓存和更新流式传输等功能，这些功能在使用 REST API 评估标志值时无法自动获取。要了解更多信息，请阅读 [Connect an SDK](../getting-started/connect-an-sdk/)。
+
+在本指南中，您将：
+
+* 设置请求头以访问 FeatBit API，包括创建访问令牌
+* 使用 REST API 阅读 FeatBit 资源的详细信息
+* 使用 REST API 创建和更新 FeatBit 资源
+* 了解与 REST API 一起使用的常见用例
+
+### 先决条件 <a href="#prerequisites" id="prerequisites"></a>
+
+要完成本指南，您必须满足以下先决条件：
+
+* 在本地或服务器上运行 FeatBit，请阅读[安装指南](../installation/full-installation.md)。
+* 能够使用一种工具来调用 REST API。有许多选项，下面进行了描述：
+  * [Curl](https://curl.se/)
+  * [Postman](https://www.postman.com/)
+  * [FeatBit API 文档](overview.md)
+
+#### Curl <a href="#curl" id="curl"></a>
+
+[Curl](https://curl.se/) 是一种常见的命令行工具，您可以用它来调用 REST API。本指南中的示例使用了 curl。您可以从自己的命令行运行本指南中的示例。
+
+#### Postman <a href="#postman" id="postman"></a>
+
+[Postman](https://www.postman.com/) 平台是调用 REST API 的另一种选择。它提供了设置、执行和存储 REST 请求的工具。您可以创建一个免费的 Postman 账户，并在 Postman 客户端上运行本指南中的示例。
+
+#### FeatBit API 文档 <a href="#launchdarkly-api-documentation" id="launchdarkly-api-documentation"></a>
+
+FeatBit API 文档提供了每个文档化请求的示例。
+
+#### FeatBit 数据层级 <a href="#launchdarkly-data-hierarchy" id="launchdarkly-data-hierarchy"></a>
+
+FeatBit 账户可以包含一个或多个**项目**。一个项目可以包含多个**环境**，**特性标志**存在于项目的一个环境中。当您创建新的标志时，它仅在该环境中创建。所有标志配置设置都特定于每个环境。您在一个环境中做的更改不适用于任何其他环境。如果您愿意，您可以为每个环境配置不同的标志设置。
+
+许多软件项目在每个项目中都有测试、暂存和生产环境。在 FeatBit 中，您可以定义适合您组织需求的任何环境结构。例如，您的移动团队可能需要“移动应用”项目中的 `android test`、`android prod`、`ios test` 和 `ios prod` 环境。
+
+### 设置请求头 <a href="#setting-up-your-headers" id="setting-up-your-headers"></a>
+
+您发出的每个请求都有一个必需的请求头信息。请求头由键/值对组成。许多用于发出请求的工具，包括 curl 和 Postman，会在请求之间自动保存这些头信息。
+
+<Callout type="info">
+如果您使用的是 Postman，请确保已选择 **Host** 和 **Content-Length** 头信息。如果您使用 **curl** 或其他工具，这两个头信息会自动添加。
+</Callout>
+
+#### 必需的请求头 <a href="#required-headers" id="required-headers"></a>
+
+对于所有请求，都需要 `Authorization` 请求头。这个头信息用于认证您的身份，并检查您是否有权在指定资源上执行请求的操作。例如，如果您请求项目的信息，但您没有读取该项目的权限，响应将是一个错误，指示您没有足够的权限。
+
+`Authorization` 请求头的值是一个 API 访问令牌。访问令牌可以是个人或服务令牌。在 FeatBit 中，您可以从 **Integrations/Access tokens** 页面创建访问令牌。对于本指南，您需要一个带有功能标志 **ManageFeatureFlag** 权限的令牌，因此在创建令牌时选择 **ManageFeatureFlag** 权限（默认已选）。
+
+要了解更多信息，请阅读 [Creating API access tokens](../integrations/api-access-tokens.md)。
+
+您不能使用 SDK 密钥作为访问令牌
+
+对于包含请求体的所有请求，API 需要一个值为 `application/json` 的 `Content-Type` 请求头。如果请求不包含请求体，API 将忽略 `Content-Type` 请求头。因此，即使API不需要它，始终将 `Content-Type` 请求头包含在内是安全的。
+
+要在 curl 中为请求包含所需的请求头，使用 `-H` 选项：
+
+示例 curl
+
+```bash
+curl -X GET 'http://localhost:5000/api/v1/envs/9d782f01-6ffb-4a7c-83a2-79304d801a46/feature-flags' \  -H 'Authorization: EXAMPLE-API-ACCESS-TOKEN' \  -H 'Content-Type: application/json'COPY
+```
+
+在此示例中，`-X` 选项指定请求的类型为 `GET`。URL 指定请求操作的资源。每个 `-H` 选项指定将包含在请求中的头信息。每次使用 curl 发出请求时，都必须包含 `-X`、请求类型、URL 和头信息。
+
+### 练习：阅读标志列表 <a href="#exercise-reading-flag-and-environment-information" id="exercise-reading-flag-and-environment-information"></a>
+
+#### 获取环境 ID <a href="#reading-a-flag" id="reading-a-flag"></a>
+
+如上所述，功能标志是特定于环境的。要列出特定环境的功能标志，我们需要使用环境 ID（在功能中，可以使用环境键调用 API）。
+
+要获取环境 ID，请执行以下操作：
+
+1. 转到 **Organization** 页，然后点击 **Projects** 选项卡。
+2. 在项目列表中找到要连接的项目和环境。
+3. 单击 **Copy Id** 按钮，环境 ID 将复制到剪贴板
+
+![](../api-docs/assets/using-featbit-rest-api/001.png)
+
+#### 调用 API
+
+使用之前步骤中获取的环境 ID，发出以下调用
+
+```bash
+curl -X GET 'http://localhost:5000/api/v1/envs/[您的环境 ID]/feature-flags?pageIndex=0&pageSize=10&isEnabled=' \
+  -H 'Authorization: EXAMPLE-API-ACCESS-TOKEN'
+  -H 'Content-Type: application/json'
+```
+
+这个请求的响应是一个 `200` 成功码和一个包含该环境的标志的 JSON 对象。例如：
+
+```json
+{
+    "success": true,
+    "errors": [],
+    "data": {
+        "totalCount": 1,
+        "items": [
+            {
+                "id": "e3d78102-8a67-4698-a744-afcb005e8dfa",
+                "name": "flag 1",
+                "description": "",
+                "key": "flag-1",
+                "isEnabled": false,
+                "variationType": "boolean",
+                "variations": [
+                    {
+                        "id": "838b01b2-d443-4317-b8d3-adb2bed483c0",
+                        "value": "true"
+                    },
+                    {
+                        "id": "0c742a83-0053-4f37-8f34-9ef164c17875",
+                        "value": "false"
+                    }
+                ],
+                "updatedAt": "2023-03-20T05:44:15.765Z",
+                "serves": {
+                    "enabledVariations": [
+                        "true"
+                    ],
+                    "disabledVariation": "false"
+                },
+                "tags": []
+            }
+        ]
+    }
+}
+```

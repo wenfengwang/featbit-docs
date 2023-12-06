@@ -1,0 +1,80 @@
+import { Callout } from 'nextra/components'
+
+# 1. 创建两个功能标识
+
+在这个主题中，您将学习如何为演示“Dino Game”创建功能标识。
+
+## 先决条件
+
+我们假设您已经通过[Docker Installation](../installation/full-installation.md)成功安装了FeatBit。
+
+## 登录到门户
+
+在创建功能标识之前，您必须登录到门户。打开您的浏览器，打开网站[`http://localhost:8081/`](http://localhost:8081/)。默认的用户名和密码为：
+
+* 用户名：test@featbit.com
+* 密码：123456
+
+![“登录”页面。](../getting-started/assets/create-2-feature-flag/001-login.png)
+
+如果这是您第一次登录，请根据下面的指南指定您的组织和项目。点击“完成”按钮完成这一步骤。
+
+![“初始化组织”页面。](../getting-started/assets/create-2-feature-flag/002-init-org.webp)
+
+完成上述过程后，您将被重定向到功能标识列表页面。您将看到一个入职指南（如下图所示）。
+
+![“入职”对话框。](../getting-started/assets/create-2-feature-flag/003.webp)
+
+## 为演示创建两个标识
+
+### 1. 创建一个“游戏运行器”功能标识
+
+在标识列表中，点击**添加**按钮，然后将文本“**游戏运行器**”作为功能标识的名称。
+
+<Callout type="info" emoji="ℹ️">
+  此功能标识将在以下主题中使用，请确保您具有与下图相同的信息。标识的键区分大小写。
+</Callout>
+
+![创建“游戏运行器”标识对话框。](../getting-started/assets/create-2-feature-flag/004.webp)
+
+点击“保存”按钮创建功能标识，然后您将看到功能标识“游戏运行器”的详细页面。
+
+![“游戏运行器”的详细页面。](../getting-started/assets/create-2-feature-flag/005.webp)
+
+> 查看文章[使用标识定位用户](../feature-flags/targeting-users-with-flags/)以获取有关定位选项卡的更多信息。
+
+### 2. 创建一个“难度模式”功能标识
+
+返回到“标识列表”，创建一个功能标识，并命名为“**难度模式**”。
+
+<Callout type="info" emoji="ℹ️">
+  此功能标识将在以下主题中使用，请确保您具有与下图相同的信息。标识的键区分大小写。
+</Callout>
+
+![创建“难度模式”标识对话框。](../getting-started/assets/create-2-feature-flag/006.webp)
+
+在此功能标识的定位页面上，在左侧面板上找到标识变体区域。
+
+#### 1. 编辑变体值
+
+* 进入编辑变体模式
+* 将`true`的值修改为`hard`
+* 将`false`的值修改为`easy`
+* 添加一个值为`normal`的新变体
+
+#### 2. 将`DateType`从`boolean`改为`string`
+
+![更改标识变体。](../getting-started/assets/create-2-feature-flag/007.webp)
+
+#### 3. 点击保存按钮保存修改。
+
+您将看到返回变体已经发生了变化：
+
+1. 默认规则部分的返回值已经从`true`改为`hard`
+2. 功能标识关闭时的返回变体已经从`false`改为`easy`
+
+![保存变体修改后。](../getting-started/assets/create-2-feature-flag/008.png)
+
+## 下一步
+
+**恭喜**，您已成功创建了2个功能标识，您将在下一个主题["尝试与演示进行交互"](try-interacting-with-the-demo.md)中学习如何使用这些功能标识。

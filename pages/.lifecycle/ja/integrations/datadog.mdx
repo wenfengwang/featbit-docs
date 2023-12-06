@@ -1,0 +1,144 @@
+import { Callout } from 'nextra/components'
+
+# DataDog
+
+FeatBitは、以下の方法でDataDogと統合することができます：
+
+1. [DataDog RUMインテグレーションを使用](https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=browser#analyze-your-feature-flag-performance-in-rum)して、フィーチャーフラグの評価データをDataDogに送信します。
+2. [DataDogイベントインテグレーションを使用](https://docs.datadoghq.com/api/?lang=bash#events)して、FeatBitからのアクティビティ（フィーチャーフラグの更新など）を受信します。
+3. DataDogメトリックが一定の閾値以下になった場合、フラグトリガーを使用してフィーチャーフラグをロールバックします。
+4. フィーチャーフラグのインサイトをDataDog APMにエクスポートします。
+
+## DataDog RUMインテグレーションの使用
+
+[Feature Flag Tracking](https://docs.datadoghq.com/real_user_monitoring/feature_flag_tracking/)を使用すると、特定の機能が表示されているユーザーと、導入した変更がユーザーエクスペリエンスやパフォーマンスにどのような影響を与えているかを把握できるため、ユーザーエクスペリエンスとパフォーマンスのモニタリングにおける可視性が向上します。
+
+### フィーチャーフラグデータ収集のセットアップ
+
+[DataDogのフィーチャーフラグデータ収集をセットアップ](https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection)するには、`javascript/typescript`プロジェクトでは、RUM SDKを初期化し、`enableExperimentalFeatures`の初期化パラメータを`["feature_flags"]`で設定する必要があります。これにより、フィーチャーフラグトラッキング機能が有効になり、フィーチャーフラグの評価データがDataDogに送信されます。
+
+```javascript
+datadogRum.init({
+  applicationId: "サンプルアプリケーションID",
+  clientToken: "サンプルクライアントトークン",
+  site: "datadoghq.com",
+  service: "デモアプリ",
+  env: "dev",
+  version: "1.0.0",
+  sessionSampleRate: 100,
+  sessionReplaySampleRate: 100,
+  trackUserInteractions: true,
+  trackResources: true,
+  trackLongTasks: true,
+  defaultPrivacyLevel: "mask-user-input",
+  // これによりベータ版のフィーチャーフラグトラッキングが有効になります
+  enableExperimentalFeatures: ["feature_flags"]
+});
+
+datadogRum.startSessionReplayRecording();
+```
+
+その後、`datadogRum`パッケージに組み込まれている`addFeatureFlagEvaluation`メソッドを使用して、`FeatBit`フィーチャーフラグの評価時にフィーチャーフラグ評価データを送信することができます。
+
+```javascript
+import { datadogRum } from "@datadog/browser-rum";
+import fbClient from "featbit-js-client-sdk";
+
+const flagEvalResult = fbClient.variation("feature-flag-key", flagsDefaultValues[prop] || '')
+datadogRum.addFeatureFlagEvaluation("feature-flag-key", flagEvalResult);
+```
+
+コードの各所に2行のコードを書きたくない場合は、`.variation(...)`と`.addFeatureFlagEvaluation(...)`を関数にカプセル化することもできます。[Reactサンプル](https://github.com/featbit/featbit-samples/blob/main/samples/dino-game/interactive-demo-react/src/featBit/featBitSlice.js)と[Vueサンプル](https://github.com/featbit/featbit-samples/blob/main/samples/dino-game/interactive-demo-vue/src/featbit.js)プロジェクトでは、`Flags Proxy`を作成してフィーチャーフラグの値を取得するための統一されたインターフェースを提供しています。そのため、Flags Proxyに`addFeatureFlagEvaluation`を追加し、次のように使用できます。
+
+```javascript
+import { datadogRum } from "@datadog/browser-rum";
+import fbClient from "featbit-js-client-sdk";
+
+export const createFlagsProxy = () => {
+    return new Proxy({}, {
+        get(target, prop, _) {
+          let returnValue = ''
+          if(typeof prop === 'string' && !prop.startsWith('__v_')){
+            returnValue = fbClient.variation(prop, flagsDefaultValues[prop] || '');
+            datadogRum.addFeatureFlagEvaluation(prop, returnValue);
+          }
+          return returnValue;
+        }
+    })
+}
+```
+
+したがって、コード内でフィーチャーフラグを呼び出すと、自動的にフィーチャーフラグの評価データをDataDogに送信するようになります。次のコードの例をご覧ください：
+
+```javascript
+// Vueの例（Piniaを使用しています）、下記のコードではフィーチャーフラグの値のリアルタイム更新を保証します
+<DinoGameCore v-if="featBitStore.flags['game-runner']== true"
+              :difficulty="featBitStore.flags['difficulty-mode']" />
+
+// Reduxを使用したReactの例、下記のコードでもフィーチャーフラグの値のリアルタイム更新を保証します
+featureFlags["game-runner"] == true ? 
+  <DinoGameCore difficulty={featureFlags["difficulty-mode"]} /> : <>
+
+```
+
+
+<Callout type="info">
+**注意**: 上記のチュートリアルでは、フィーチャーフラグの評価データをブラウザで収集する方法を紹介しています。iOSやAndroidなどの他のプラットフォームの場合は、[DataDogドキュメント](https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=ios#custom-feature-flag-management)を参照してください。
+</Callout>
+
+
+### RUMおよびAPMでフィーチャーフラグのパフォーマンスを分析する
+
+
+FeatBitをDataDogと統合した後、[RUMでフィーチャーフラグのパフォーマンスを分析することができます](https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=browser#analyze-your-feature-flag-performance-in-rum)。DataDogのRUMダッシュボードを使用して、**セッション**、**ビュー**、**エラー**をフィルタリングすることができます。例えば、FeatBitが評価されたビューで発生した指定された時間枠内のすべてのエラーを見つけることができます。以下の図のようになります。
+
+![](../integrations/assets/datadog/filter-errors-with-feature-flag-in-rum.webp)
+
+フィーチャーフラグを表示して分析するには、[DataDogフィーチャーフラグトラッキングチュートリアル](https://docs.datadoghq.com/real_user_monitoring/feature_flag_tracking/#view-your-feature-flags)を参照してください。
+
+[DataDog APM](https://www.datadoghq.com/product/apm/)を使用している場合、フロントエンドのフィーチャーフラグデータをトレースに接続する方法が提供されています。[Rum and Tracesを接続する](https://docs.datadoghq.com/real_user_monitoring/connect_rum_and_traces/?tab=browserrum)を参照してください。これにより、フロントエンドおよびバックエンドのエラーに基づいたアラートを作成することができます。
+
+## DataDogイベントインテグレーションの使用
+
+DataDogの統合を使用すると、FeatBitからのアクティビティ（フィーチャーフラグの更新やFeatBitに新しいアカウントメンバーが追加されたなど）を受け取るための[Datadogイベント](https://docs.datadoghq.com/api)を設定することができます。フィーチャーフラグの状態が変更された場合、例えばフィーチャーフラグの更新やFeatBitに新しいアカウントメンバーが追加された場合、FeatBitはイベントをDatadogに送信します。この統合を使用して、FeatBitの変更がアプリやインフラストラクチャのメトリクスにどのような影響を与えるかを相関させて理解することができます。
+
+以下の画像は、フィーチャーフラグのイベントとサービスAPMダッシュボードの障害検知との相関関係の例です。フィーチャーフラグをオフにした後、障害は解消されました。
+
+![](../integrations/assets/datadog/dashboard-apm-error-turn-off-events.png)
+
+フルイベント統合はまだ開発中ですが、現時点では、MongoDBの`AuditLogs`コレクションのイベント変更を監視するために独自のプログラムを作成することができます。以下は、[.NETでのコレクション変更の監視方法の公式チュートリアル](https://mongodb.github.io/mongo-csharp-driver/2.7/reference/driver/change_streams/)です。
+
+![](../integrations/assets/datadog/mongodb-auditlog-collection.png)
+
+その後、[DataDogイベントAPI](https://docs.datadoghq.com/api/latest/events/#post-an-event)を使用して、アクティビティをDataDogに送信することができます。
+
+<Callout type="info" emoji='💡'>
+この実装の開発を加速してほしい場合は、お知らせください。
+</Callout>
+
+
+## フラグトリガーをDataDogで使用する
+
+[DataDogのWebhook](https://docs.datadoghq.com/integrations/webhooks/)を使用すると、メトリックアラートがトリガーされたときにサービスに通知することができます。Webhookの設定では、FeatBitの[フラグトリガー](../feature-flags/feature-workflow/flag-triggers)を直接呼び出すか、特定のユーザーグループにロールアウト/ロールバックするための[FeatBit REST API](../api-docs/using-featbit-rest-api)を呼び出すかを選択することができます。フラグトリガーを呼び出すWebhookの構成手順は以下の通りです：
+
+1. [Feature Flagsでフラグトリガー](/feature-flags/feature-workflow/flag-triggers)を作成する必要があります。
+
+![](../integrations/assets/datadog/flag-trigger.png)
+
+2. DataDogのインテグレーションで、新しいWebHookを作成し、新しいWebHookのフラグトリガーURLをコピーします。
+
+![](../integrations/assets/datadog/create-webhook.png)
+
+3. モニターページに移動し、検索クエリと条件を持つメトリックを作成します。その後、アラートのテキストに `@webhook-name_of_the_webhook` を追加します。このウェブフックは、条件で設定した閾値を下回った場合、アラートのテキストに`@webhook-name_of_the_webhook`が追加されたWebHookがトリガーされます。
+
+![](../integrations/assets/datadog/monitor-notify-team.png)
+
+4. WebHookがトリガーされると、フィーチャーフラグが自動的にオン/オフに切り替わります。
+
+## フィーチャーフラグのInsightsをDataDog APMにエクスポートする
+
+Datadogはアプリケーションとシステムのパフォーマンスと振る舞いをモニタリングするために様々なツールと機能を提供しています。**Metrics**を使用して環境の健全性を一目で評価することができます。例えば、Webサイトの読み込み速度やサーバーの平均メモリ使用量などを可視化することができます。問題を特定した後は、**logs**と**tracing**を使用してさらにトラブルシューティングを進めることができます。
+
+フィーチャーフラグのInsightsデータ（フロントエンドおよびバックエンドのフィーチャーフラグ使用データ）およびカスタムイベントデータをDataDogに**ClickHouse**（Pro版）または**MongoDB**（Standard版）を介してエクスポートすることで、DataDog APMおよびMetricsとの統合を行うことができます。その後、メトリクスではフラグの使用状況（カウント、高レベルな影響）、トレースでは個々のリクエストに対するフラグの影響を深く把握することができます。メトリクスとトレースの両方を使用することで、フィーチャーフラグの動作とアプリケーションのパフォーマンスの包括的なビューを取得することができます。
+
+**この実装についてのアイデアがある場合は、ご意見をお聞かせください**。

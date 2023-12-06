@@ -1,0 +1,57 @@
+import { Callout } from 'nextra/components'
+
+# 使用Docker Compose进行安装
+
+## 先决条件
+
+* Docker Engine 版本 **1.13.1+**
+* Docker Compose **1.27.0+**
+
+## 安装步骤
+
+FeatBit提供两种计划：**标准版**和**专业版**。适合您的计划取决于您的业务规模和特定需求。一般来说，标准版适合小型企业，专业版适合中型和大型企业。您可以在[这里](../tech-stack/standard-vs.-professional.md)了解更多差异。所有计划都保证弹性、速度、访问我们的Slack社区以及我们团队的支持。
+
+*   将存储库克隆到您的服务器或本地计算机上，然后启动服务。
+
+    ```bash
+    git clone https://github.com/featbit/featbit
+    cd featbit
+
+    # 标准版，请运行
+    docker compose up -d
+
+    # 专业版，请运行
+    docker compose -f docker-compose-pro.yml up -d
+    ```
+* 所有容器启动后，请访问FeatBit的门户网站[http://localhost:8081](http://localhost:8081/)并使用默认凭据登录。
+  * 用户名：**test@featbit.com**
+  * 密码：**123456**
+
+如果您想从源代码构建图像并启动容器，您也可以按照以下步骤操作：&#x20;
+
+```sh
+# 标准版，请运行
+docker compose up -f docker-compose-dev.yml -d
+
+# 专业版，请运行
+docker compose -f docker-compose-pro-dev.yml up -d
+```
+
+<Callout type="info">
+专业版的docker compose文件包含一个名为**init-kafka-topics**的“运行一次”服务，它创建系统需要的kafka主题。此服务只需运行一次，然后退出，所以这个服务状态处于Exited状态也是可以的。
+</Callout>
+
+## 更新步骤
+
+运行以下命令以更新到最新的FeatBit图像：
+
+```bash
+docker-compose pull
+docker-compose rm -fsv featbit
+docker-compose up -d
+```
+
+## 常见问题解答
+
+* [如何解决docker容器端口冲突问题？](faq.md#how-to-solve-docker-container-port-conflict-problem)
+* [如何使FeatBit门户可以公开访问？](faq.md#how-to-make-featbit-portal-accessible-publicly)

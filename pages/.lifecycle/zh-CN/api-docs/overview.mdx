@@ -1,0 +1,52 @@
+import { Callout } from 'nextra/components'
+
+# API
+
+<Callout type="info">
+当前文章是对如何向FeatBit REST API发起请求进行的概述。关于API的完整列表以及如何使用每个API的详细说明，我们已经提供了一个使用redoc支持的文档，可以在[此处](https://featbit-tio-eu-api.azurewebsites.net/docs/index.html)查看。如果您在本地或服务器上运行FeatBit，还可以指向URL: <strong>URL\_OF\_API\_SERVER/docs.</strong> 例如，如果您在本地机器上运行FeatBit而不使用https，则URL应为<strong>http://localhost:5000/docs</strong>。
+</Callout>
+
+### 身份验证
+
+所有REST API资源都需要通过[个人或服务访问令牌](../integrations/api-access-tokens.md)进行身份验证，不支持其他身份验证机制。您可以在**集成/访问令牌**页面上管理个人访问令牌。
+
+#### 使用请求头进行身份验证
+
+与API进行身份验证的唯一方式是在请求中添加一个包含访问令牌的`Authorization`头。`Authorization`头的值必须是您的访问令牌。有关如何添加此头的详细信息，请参阅[使用FeatBit REST API](using-featbit-rest-api.md)。
+
+### 表示
+
+所有资源都预期接收和返回JSON响应体。错误响应也发送JSON体。要了解有关API的错误格式的更多信息，请阅读[错误](overview.md#errors)。
+
+实际上，这意味着您始终会收到一个带有`Content-Type`头设置为`application/json`的响应。
+
+此外，用于`PATCH`、`POST`和`PUT`请求的请求体必须被编码为JSON，并具有`Content-Type`头设置为`application/json`。
+
+### 错误
+
+API始终以统一的格式返回错误。下面是一个示例：
+
+```json
+{
+    "success": false,
+    "errors": [
+        "Unauthorized"
+    ],
+    "data": null
+}
+```
+
+**errors**字段表示错误的一般类别。
+
+### 跨域资源共享（CORS）
+
+FeatBit API支持从任何来源发出的AJAX请求的跨域资源共享（CORS）。如果请求中提供了`Origin`头，则它将作为明确允许的来源进行回显。否则，请求将返回一个通配符，即`Access-Control-Allow-Origin: *`。有关CORS的更多信息，请阅读[CORS W3C推荐](http://www.w3.org/TR/cors)。示例CORS头可能如下所示：
+
+```
+Access-Control-Allow-Headers: Accept, Content-Type, Content-Length, Accept-Encoding, Authorization
+Access-Control-Allow-Methods: OPTIONS, GET, DELETE, PATCH
+Access-Control-Allow-Origin: *
+Access-Control-Max-Age: 300
+```
+
+您可以像使用同源调用一样进行经过身份验证的CORS调用，使用访问令牌进行身份验证。永远不要将访问令牌暴露给不受信任的实体。

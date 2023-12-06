@@ -1,0 +1,44 @@
+import { Callout } from 'nextra/components'
+
+# FeatBit 代理
+
+<Callout type="info">
+这是 FeatBit 代理的常规介绍，如果您正在寻找安装 FeatBit 代理的详细说明，请参考此[文档](https://github.com/featbit/featbit-agent#installation)。
+</Callout>
+
+
+FeatBit 代理（GitHub 仓库在[这里](https://github.com/featbit/featbit-agent)）是一个小程序，它位于 FeatBit 服务器和您的 SDK 之间，提供了一个缓存的读取副本和您的 FeatBit 服务器的中继代理。这意味着您可以通过增加 FeatBit 代理的数量来为数万个连接的 SDK 提供服务，而无需增加 FeatBit 服务器的负载。
+
+FeatBit 代理提供了四个重要的功能：
+
+* **性能**：FeatBit 代理将特征标志和分段缓存在内存中。单个运行在资源较少的机器上的 FeatBit 代理实例可以支持数千个 WebSocket 连接，您可以通过增加数量来支持数万个 WebSocket 连接而无需复制 FeatBit 服务器。
+* **低延迟**：FeatBit 代理具有在靠近终端用户的位置运行的能力，从而可以显著减少远离 FeatBit 服务器的用户的延迟。
+* **数据保护**：当您将 FeatBit 代理部署在客户的基础架构上时，您可以配置它不将用户使用数据转发到 FeatBit 服务器并将数据保留在本地，或者在将数据发送到 FeatBit 服务器之前执行数据匿名化。这确保符合 GDPR 和其他数据保护法律，并促进用户数据和隐私的保护。
+* **可靠性**：FeatBit 代理设计为可以经受重启并在失去与 FeatBit 服务器的连接时正常运行。
+
+## 概念
+
+FeatBit 代理支持两种不同的模式：
+
+* 代理模式：连接到 FeatBit 服务器，支持动态特征标志、分段和环境键的同步和其他高级功能。
+* 离线模式：不连接到 FeatBit 服务器，对数据和环境键具有完全控制权。
+
+### 代理模式
+
+![](../relay-proxy/assets/featbit-agent/001.webp)
+
+代理模式是默认模式，大多数情况下应该默认使用。它连接到 FeatBit 服务器，并将其用作特征标志、分段和环境键的真实数据源。
+
+用户使用数据可以配置为保留在代理中或在发送到 FeatBit 服务器之前进行匿名化处理。
+
+默认情况下，代理模式使用内存缓存来存储从 FeatBit 服务器获取的特征标志。但是，您可能希望使用更持久的存储解决方案。为此，FeatBit 代理支持 Redis 或备份文件，您可以在启动代理时配置它们。然后，在启动时，FeatBit 代理将检查是否指定了持久备份选项，如果指定了，将使用该选项来填充其内部缓存。如果您的 FeatBit 服务器无法访问，这可能很有用。
+
+在使用 Redis 作为存储解决方案时，多个代理可以共享相同的 Redis，允许 FeatBit 代理水平扩展为一个集群并保持数据的一致性。
+
+### 离线模式
+
+![](../relay-proxy/assets/featbit-agent/002.webp)
+
+离线模式应在无法连接到 FeatBit 服务器时使用。它还可以在您需要对客户端接收到的数据以及可用于访问数据的环境键具有完全控制权时使用。
+
+由于此模式不连接到 FeatBit 服务器，因此需要特征标志、分段和环境键的 JSON 转储。您可以通过在 FeatBit UI 上创建中继代理或者使用包含数据的转储文件来配置 FeatBit 服务器将此转储发送到 FeatBit 代理实例上。
