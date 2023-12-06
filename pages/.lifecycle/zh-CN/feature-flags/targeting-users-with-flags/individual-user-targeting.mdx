@@ -1,0 +1,33 @@
+import { Callout } from 'nextra/components'
+
+# 个别用户定位
+
+## 概述 <a href="#overview" id="overview"></a>
+
+本主题介绍如何使用标志的**定位**选项卡来控制哪些个别用户接收特征标志的变化。
+
+## 将用户分配到变体 <a href="#assigning-users-to-a-variation" id="assigning-users-to-a-variation"></a>
+
+**定位**选项卡中的“定位用户”部分可以让您将个别用户分配到特定的标志变体。
+
+> 请仅对少量个别用户进行定位
+>
+> 我们建议仅对个别用户的数量较少的情况使用个别定位。对于每个变体定位超过100个用户可能会导致性能下降。
+
+如果您的应用程序已经将数据发送回 FeatBit，则可以按名称或用户键搜索用户。这些字符串区分大小写。将鼠标悬停在用户行上以查看用户的更多属性。
+
+如果您需要定位一个 FeatBit 不知道的用户，您可以手动输入他们的键。这些用户会以黄色显示，直到他们遇到一个特征标志。
+
+在下图中，特定的用户正在接收一个标志的第一个变体。该标志对他们进行了定位。这意味着当这些用户访问该标志时，他们将接收到该标志的变体。
+
+![](../../feature-flags/assets/targeting-users-with-flags/individual-user-targeting/001.webp)
+
+## 移除定位的用户 <a href="#removing-targeted-users" id="removing-targeted-users"></a>
+
+您可以通过单击用户的名称将用户从标志的定位列表中移除。操作步骤如下：
+
+1. 导航至标志的**定位**选项卡。
+2. 在“定位用户”部分，找到要删除的用户的名称。
+3. 单击其名称旁边的**X**以将其移除：
+
+![](../../feature-flags/assets/targeting-users-with-flags/individual-user-targeting/002.webp)

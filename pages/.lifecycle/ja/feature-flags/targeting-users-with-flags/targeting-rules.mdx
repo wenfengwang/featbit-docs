@@ -1,0 +1,135 @@
+import { Callout } from 'nextra/components'
+
+# ターゲティングルール
+
+## 概要 <a href="#overview" id="overview"></a>
+
+このトピックでは、ビルトインおよびカスタムのユーザ属性に基づいてユーザのセグメントをターゲットするためのターゲティングルールの使用方法について説明します。
+
+## ターゲティングルールの作成 <a href="#creating-targeting-rules" id="creating-targeting-rules"></a>
+
+ターゲティングルールには1つ以上の条件が含まれる場合があります。
+
+各条件には3つのパートがあります：
+
+* ビルトインまたはカスタムの**ユーザ属性**は、条件の影響範囲を定義します。たとえば、電子メールアドレスのみをターゲットする場合があります。詳細については、「[ユーザ属性](targeting-rules.mdx#user-attributes)」を参照してください。
+* **オペレータ**は、属性の異なる特性を設定します。たとえば、特定の拡張子で終わる電子メールに対する条件を限定する場合があります。条件がオペレータが追跡する複数の値を指定する場合、オペレータは配列を反復処理します。詳細については、「[オペレータ](targeting-rules.mdx#operators)」を参照してください。
+* **値**は、指定した値で属性を識別します。たとえば、`gmail.com`です。
+
+以下は、ユーザのターゲティングルールの画像です：
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/001.webp)
+
+メールアドレスが`gmail.com`で終わるすべてのユーザに`true`を提供するルールを作成するには：
+
+1. **ルールの追加**アイコンをクリックします。
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/002.webp)
+
+2. ルールの名前を入力します。
+3. **属性を選択**メニューから`email`を選択します。
+4. **オペレータを選択**メニューから`ends with`を選択します。
+5. **値**フィールドに`gmail.com`を入力します。
+6. **提供**メニューから`true`を選択します。
+7. **保存**をクリックします。
+
+ターゲティングルールに`null`値を持つカスタム属性を参照する場合、フラグはそのルールをスキップします。
+
+ルールに複数の条件を追加することもできます。以下は、ルールが複数の条件と値を処理する方法です：
+
+* ユーザは、ルールの**すべての**条件を満たす必要があります。条件のいずれかが満たされない場合、ユーザはルールに一致しません。
+* 条件に複数の値がある場合、FeatBitは値の**いずれか**に一致する場合、条件を満たしたとみなします。
+
+#### パーセンテージロールアウト <a href="#percentage-rollouts" id="percentage-rollouts"></a>
+
+ルールに一致するユーザの一部のみに特定のバリエーションを提供したい場合は、パーセンテージロールアウトを使用できます。
+
+以下は、パーセンテージロールアウトセクションの画像です：
+
+この例では、ユーザの25%が`true`のバリエーションを受け取ります。
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/003.webp)
+
+詳細については、「[パーセンテージロールアウト](percentage-rollouts.md)」を参照してください。
+
+#### 実験 <a href="#experimentation" id="experimentation"></a>
+
+ターゲティングルールを保存した後、**Set A/B test rule**ボタンをクリックしてルールの実験を実行することができます。詳細については、「[実験の作成](../../experimentation/creating-experiments.md)」を参照してください。
+
+以下は、フラグのターゲティングルールにある**Set A/B test rule**ボタンの画像です：
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/004.webp)
+
+#### ユーザ属性 <a href="#user-attributes" id="user-attributes"></a>
+
+FeatBitには、ユーザのビルトイン属性が含まれています。以下は一部の一般的なユーザ属性の例です：
+
+* `keyId`
+* `name`
+
+ビルトインユーザ属性の完全なリストについては、「[ビルトインユーザ属性](../users-and-user-segments/user-attributes.md)」を参照してください。
+
+FeatBitでは、ユーザ属性をカスタムで作成することもできます。たとえば、プラン、グループ、役割、場所、組織に基づいてユーザをターゲットしたい場合があります。カスタムユーザ属性を使用すると、通常のプランを利用するユーザにいくつかの機能を表示したり、プレミアムプランを利用するユーザに追加の機能を表示したりできます。また、ユーザの30%ではなく、組織の30%に新機能を展開することもできます。
+
+詳細については、「[ユーザ属性](../users-and-user-segments/user-attributes.md)」を参照してください。
+
+#### オペレータ <a href="#operators" id="operators"></a>
+
+FeatBitは以下のオペレータをサポートしています：
+
+| オペレータ | 属性のタイプ | 意味 |
+| ------------------------------------ | ------------- | ------------ |
+| is one of `=`, is not one of `!=`  | 文字列、数値、ブール、日付 | 完全一致 |
+| ends with, does not end with | 文字列 | 文字列の後方一致 |
+| starts with, does not start with | 文字列 | 文字列の前方一致 |
+| matches, does not match | 文字列 | 正規表現に一致する |
+| contains, does not contain | 文字列 | 部分文字列の一致 |
+| greater than `>`, less than `<`, greater than or equal to `>=`, less than or equal to `<=` | 数値 | 数値の比較 |
+| user is in segment, user is not in segment | セグメント名 | ユーザが指定されたセグメントのターゲティングルールによって含まれるか除外されるか。詳細については、「[ユーザセグメント](../users-and-user-segments/user-segments)」を参照してください。 |
+
+## デフォルトルールの設定 <a href="#setting-the-default-rule" id="setting-the-default-rule"></a>
+
+FeatBitは、ターゲティングルールのいずれにも一致しないユーザのための最終的なデフォルトルールを定義します。他のルールと同様に、特定のバリエーションを提供するか、残りのユーザにパーセンテージロールアウトを適用するかを選択できます。
+
+以下は、パーセンテージロールアウトセクションの画像です：
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/005.webp)
+
+これで、他のどのルールにも該当しないすべてのユーザの30%が`true`を受け取ります。
+
+ユーザキーや他のカスタム属性を基にユーザをターゲットする必要がない場合、デフォルトルールを使用して、すべてのユーザに対してフラグの展開を制御することができます。
+
+## デフォルトのオフバリエーションの設定 <a href="#setting-the-default-off-variation" id="setting-the-default-off-variation"></a>
+
+トグルがオフになっている場合、FeatBitはフィーチャーフラグのデフォルトオフバリエーションを提供します。ブールフラグの場合、デフォルトのオフバリエーションは`false`に設定されています。マルチバリエーションフラグの場合、カスタムバリエーションのいずれかを選択します。デフォルトのオフバリエーションをブールおよびマルチバリエーションフラグの両方でカスタマイズすることができます。
+
+## 評価順序 <a href="#evaluation-order" id="evaluation-order"></a>
+
+**Targeting**タブでは、以下の順序でルールが評価されます：
+
+### フィーチャーがONになっている場合
+
+1. 個別のユーザのターゲティング\
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/006.webp)
+   1. 最初のバリエーション
+   2. 2番目のバリエーション
+   3. 3番目のバリエーション
+   4. ...
+2. ユーザカスタマイズルールのターゲティング\
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/007.webp)
+   1. UIに表示される最初のルール
+   2. UIに表示される2番目のルール
+   3. UIに表示される3番目のルール
+   4. ...
+3. **デフォルトルール**の設定で残りのユーザをターゲット
+
+<Callout type="info">
+ユーザが複数のルールに一致する場合、最初に一致するルールが適用されます。
+カスタマイズしたルールは、ルールの左端をクリックして上下にドラッグすることで並べ替えることができます。
+</Callout>
+
+### フィーチャーがOFFになっている場合
+
+OFFセクションで事前に定義されたバリエーションを提供します
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/008.webp)

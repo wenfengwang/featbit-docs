@@ -1,0 +1,75 @@
+import { Callout } from 'nextra/components'
+
+# 3. 连接 SDK
+
+使用 SDK 是理解如何通过特性标志交付、控制和实验软件的一项基本技能。
+
+在上一步“尝试与演示互动”中，你已经学会了如何使用特性标志使游戏组件出现/消失，并切换游戏的难度模式。现在让我们看看它是如何在代码中实现的。
+
+## 按照门户中的指导操作
+
+最简单的方法是按照门户获取开始页面上的指示操作。在门户中，您可以：
+
+**步骤 1**. 选择您在上一步中刚创建的一个特性标志。然后点击“下一步”按钮，前往步骤 2。
+
+![](../getting-started/assets/connect-to-sdk/001.png)
+
+**步骤 2**. 选择您熟悉的编程语言。复制自动生成的代码，并在您的 IDE 中运行它。
+
+![](../getting-started/assets/connect-to-sdk/002.png)
+
+门户生成的代码包含了所有必要的元素，例如：
+
+- SDK 安装
+- 通过服务器 URL、环境键初始化 SDK
+- 通过自定义属性识别用户
+- 特性标志实现
+- 特性标志评估
+- 特性标志更新监听器
+- 等等
+
+![](../getting-started/assets/connect-to-sdk/003.png)
+
+
+## 手动连接 SDK
+
+我们提供多种客户端、服务器端和移动端 SDK 可供选择。您可以选择您擅长的语言，以加快完成快速入门。
+
+<Callout type="info" emoji="👾">
+  我们推荐您使用我们的 SDK，因为我们已经为您实现了最佳实践。
+</Callout>
+
+### Javascript
+
+我们提供了一个客户端 [Javascript/Typescript SDK](https://github.com/featbit/featbit-js-client-sdk)。我们还为 [React](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-react) 和 [Vue](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-vue) 提供了“恐龙游戏”的样例。这个 SDK 与 Typescript、React、Vue、Angular 等完美配合。
+
+SDK 的 GitHub 仓库中包含了如何使用它的完整教程。它还提供了一个示例项目，供您尝试。
+
+### .NET
+
+我们提供了一个 [服务端 .NET SDK](https://github.com/featbit/featbit-dotnet-sdk)，供您使用。这个 SDK 可以在您的控制台 APP 或 ASP.NET Core APP 中使用。
+
+它也可以用于前端应用程序，如 WPF、WinForm、MAUI 等。但我们不推荐您在移动应用中使用它，因为它比真正的移动 SDK 消耗更多的电池电量。
+
+SDK 的 GitHub 仓库中包含了如何使用它的完整教程。它还提供了一个示例项目，供您尝试。
+
+### Java
+
+我们提供了一个 [Java SDK](https://github.com/featbit/featbit-java-sdk)，供您使用。这个 SDK 可以在您的控制台 APP 或 Spring Boot APP 中使用。
+
+SDK 的 GitHub 仓库中包含了如何使用它的完整教程。它还提供了一个示例项目，供您尝试。
+
+### Python
+
+我们提供了一个 [Python SDK](https://github.com/featbit/featbit-python-sdk)。SDK 的 GitHub 仓库中包含了如何使用它的完整教程。它还提供了一个示例项目，供您尝试。
+
+### Go
+
+我们提供了一个 [Go SDK](https://github.com/featbit/featbit-go-sdk)。SDK 的 GitHub 仓库中包含了如何使用它的完整教程。它还提供了一个示例项目，供您尝试。
+
+
+### REST APIs & WebSocket
+
+对于我们尚未提供 SDK 的任何其他语言或框架，您可以使用我们的 REST APIs 来获取特性标志。请见[此处](../api-docs/get-users-feature-flags-with-api)的文档。
+
+您可以使用我们的 WebSocket 接口来实时获取特性标志更新。请加入我们的 Slack 频道，获取有关此功能的更多信息。
