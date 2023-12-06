@@ -5,7 +5,11 @@
 1. Go to **Get Started** page
 2. Create a feature flag or select an existing one and click on next
 3. Copy the **Open API Endpoint** from the **SDK Configs** section
-
+   
+1. Go to **Get Started** page
+2. Create a feature flag or select an existing one and click on next
+3. Copy the **Open API Endpoint** from the **SDK Configs** section
+   
 ![](/assets/faq/001.png)
 
 ## How to check the REST API doc
