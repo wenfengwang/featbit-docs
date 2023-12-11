@@ -1,25 +1,26 @@
+```markdown
 import { Callout } from 'nextra/components'
 
-# 部分的なインストール
+# 部分インストール
 
-お使いのMongoDB、Redis、Kafka、Zookeeper および/または ClickHouseのサービスが独自のインフラストラクチャで実行されているかもしれませんが、それを使ってFeatBitを実行し、自分自身のサービスを実行したい場合、これは完全に可能で簡単に行えます。このドキュメントでは、Docker Compose を使って行う方法を説明します。また、簡単にKubernetesに変換することもできます。
+既にMongoDB, Redis, Kafka, Zookeeper, またはClickHouseサービスを独自のインフラストラクチャで稼働させていて、それらのサービスを使ってFeatBitを実行したい場合、これは全く可能で簡単に行えます。このドキュメントでは、docker composeを用いた方法について説明しますが、Kubernetesへの変換も容易です。
 
-このドキュメントでは、以下のFeatBitサービスの実行方法を示します。
+このドキュメントでは、以下のFeatBitサービスの実行方法を示します：
 
-* **UI :** ユーザーがフィーチャーフラグ、セグメント、実験などを管理および公開するためのビジュアルなUIインターフェースを提供します。
-* **APIサーバー :** UIおよび外部統合サービス（フラグトリガー、コードリファレンスなど）向けのデータ管理機能を提供します。
-* **評価サーバー :** スケーラブルで高性能なフラグルール評価エンジンとデータ配信サーバーを提供します。
-* **データアナリティクスサーバー :** データアナリティクスエンジンを提供します。以下のサービスを保証します
-  * 実験を計算し、リアルタイムに結果を返します。
-  * UI内のすべての分析のインサイトサービスを提供します。たとえばフィーチャーフラグレポートなど。
+* **UI :** 機能フラグ、セグメント、実験などの管理や公開のためのビジュアルなUIインターフェイスを提供します。
+* **API Server :** UIや外部統合サービス（フラグトリガー、コード参照など）のためのデータ管理機能を提供します。
+* **Evaluation Server :** スケーラブルで高性能なフラグルール評価エンジンとデータ配信サーバーを提供します。
+* **Data Analytics server :** データ分析エンジンを提供します。以下のサービスを保証します。
+  * 実験を計算し、ほぼリアルタイムで結果を返します。
+  * UI内のすべての分析に対するインサイトサービスを提供します。例えば、機能フラグレポートなどがあります。
 
-## 必要条件
+## 前提条件
 
 * Docker（バージョン20.10.7以上）
 * Docker-Compose（バージョン1.29.2以上）
 
 <Callout type="info">
-Windowsユーザーは、以下のコマンドを実行するためにPowerShellを使用することをお勧めします。
+Windowsユーザーには、以下のコマンドを実行するためにPowerShellの使用が推奨されます。
 </Callout>
 
 ## 準備
@@ -31,13 +32,13 @@ git clone https://github.com/featbit/featbit
 cd featbit
 ```
 
-* クイックテストを行っている場合は、**docker-compose-infra.yaml** ファイルを作成していますので、それを使用してFeatBitのインフラサービス（Redis、MongoDB、Kafka、Zookeeper、ClickHouse）をインストールできます。次のコマンドを実行してこれらのサービスを起動します。独自のインフラサービスを使用する場合は、このステップをスキップしてください。
+* もし簡易テストを行う場合、**docker-compose-infra.yaml** ファイルを作成しました。FeatBitのインフラサービス（Redis, MongoDB, Kafka, Zookeeper, ClickHouse）をインストールするためにこれを使用できます。次のステップがスムーズに行えるように、以下のコマンドを実行してこれらのサービスを開始できます。独自のインフラサービスを使用する場合は、このステップはスキップしてください。
 
 ```sh
 docker compose -f docker-compose-infra.yml up -d
 ```
 
-* **前のステップをすでに実行している場合は、このステップをスキップしてください**。また、ClickHouseが存在しない自分のインフラストラクチャを使用することを決定した場合のみ、別のDocker Composeファイル **docker-compose-clickhouse.yml** を作成します。この場合、次のパスにZookeeperの構成を設定します：**featbit/infra/clickhouse/single\_node/config.xml**
+* **前のステップを既に実行した場合はこのステップを省略してください。** ClickHouseのみをインストールするための別のdocker composeファイル **docker-compose-clickhouse.yml** も作成しました。独自のインフラを使用することにしたがClickHouseがない場合、以下のパスでのZookeeper設定を設定します：**featbit/infra/clickhouse/single_node/config.xml**
 
 ```xml
 <zookeeper>
@@ -48,21 +49,22 @@ docker compose -f docker-compose-infra.yml up -d
 </zookeeper>
 ```
 
-そして、次のコマンドを実行します。
+その後、以下のコマンドを実行します。
 
 ```sh
 docker compose -f docker-compose-clickhouse.yml up -d
 ```
 
-* お気に入りのエディタで _**docker-compose-partial.yml**_ ファイルを開き、次の設定が表示されます。インフラサービス（Redis、MongoDB、Kafka、ClickHouse）がこのドキュメントでインストールするFeatBitサービスと同じネットワークで実行されていると仮定します。
+*   お気に入りのエディタで _**docker-compose-partial.yml**_ を開くと、次のような設定が表示されます。このドキュメントでインストールするFeatBitサービスが同一ネットワーク上でインフラサービス（Redis, MongoDB, Kafka, ClickHouse）と実行されることを前提としています。
+    &#x20;  &#x20;
 
 ```yaml
 ui:   
   image: featbit/featbit-ui:latest
   environment:
-    - API_URL=[REPLACE_WITH_THE_API_SERVER_IP_OR_DOMAIN] # example: http://localhost:5000 
-    - DEMO_URL=https://featbit-samples.vercel.app # keep it like this, this is for tutorial
-    - EVALUATION_URL=[REPLACE_WITH_THE_EVALUATION_SERVER_IP_OR_DOMAIN] # example: http://localhost:5100 
+    - API_URL=[REPLACE_WITH_THE_API_SERVER_IP_OR_DOMAIN] # 例: http://localhost:5000 
+    - DEMO_URL=https://featbit-samples.vercel.app # このままで、これはチュートリアル用です
+    - EVALUATION_URL=[REPLACE_WITH_THE_EVALUATION_SERVER_IP_OR_DOMAIN] # 例: http://localhost:5100 
   depends_on:
     - api-server
   ports:
@@ -73,10 +75,10 @@ ui:
 api-server:
   image: featbit/featbit-api-server:latest
   environment:
-      - MongoDb__ConnectionString=[REPLACE_WITH_MONGODB_CONNECTION_STRING] # example: mongodb://admin:password@mongodb:27017
-      - MongoDb__Database=[REPLACE_WITH_MONGODB_NAME] # example featbit
-      - Kafka__BootstrapServers=[REPLACE_WITH_KAFKA_CONNECTION_STRING] # example: 192.168.56.1:9092
-      - OLAP__ServiceHost=[REPLACE_WITH_DA_SERVER_IP_OR_DOMAIN]:8200 # example: http://192.168.56.1:8200
+      - MongoDb__ConnectionString=[REPLACE_WITH_MONGODB_CONNECTION_STRING] # 例: mongodb://admin:password@mongodb:27017
+      - MongoDb__Database=[REPLACE_WITH_MONGODB_NAME] # 例featbit
+      - Kafka__BootstrapServers=[REPLACE_WITH_KAFKA_CONNECTION_STRING] # 例: 192.168.56.1:9092
+      - OLAP__ServiceHost=[REPLACE_WITH_DA_SERVER_IP_OR_DOMAIN]:8200 # 例: http://192.168.56.1:8200
   ports:
     - "5000:5000"
   networks:
@@ -85,10 +87,10 @@ api-server:
 evaluation-server:
   image: featbit/featbit-evaluation-server:latest
   environment:
-      - MongoDb__ConnectionString=[REPLACE_WITH_MONGODB_CONNECTION_STRING] # same as api-server
-      - MongoDb__Database=[REPLACE_WITH_MONGODB_NAME] # same as api-server
-      - Kafka__BootstrapServers=[REPLACE_WITH_KAFKA_CONNECTION_STRING] # same as api-server
-      - Redis__ConnectionString=[REPLACE_WITH_REDIS_CONNECTION_STRING] # example: http://192.168.56.1:6379
+      - MongoDb__ConnectionString=[REPLACE_WITH_MONGODB_CONNECTION_STRING] # api-serverと同じ
+      - MongoDb__Database=[REPLACE_WITH_MONGODB_NAME] # api-serverと同じ
+      - Kafka__BootstrapServers=[REPLACE_WITH_KAFKA_CONNECTION_STRING] # api-serverと同じ
+      - Redis__ConnectionString=[REPLACE_WITH_REDIS_CONNECTION_STRING] # 例: http://192.168.56.1:6379
   ports:
     - "5100:5100"
   networks:
@@ -101,16 +103,16 @@ da-server:
   networks:
     - featbit-network-service
   environment:
-    KAFKA_HOSTS: [REPLACE_WITH_KAFKA_CONNECTION_STRING] # example: kafka:9092
-    REDIS_HOST: [REPLACE_WITH_REDIS_IP_OR_DOMAIN] # example: redis
-    REDIS_PORT: [REPLACE_WITH_REDIS_PORT] # example: 6379
-    CLICKHOUSE_HOST: [REPLACE_WITH_CLICKHOUSE_DB_HOST_IP_OR_DOMAIN] # example clickhouse-server
-    CLICKHOUSE_KAFKA_HOSTS: [REPLACE_WITH_KAFKA_CONNECTION_STRING] # example kafka:9092
-    # the following env variables are security related, they are optional
-    # if any redis pwd
+    KAFKA_HOSTS: [REPLACE_WITH_KAFKA_CONNECTION_STRING] # 例: kafka:9092
+    REDIS_HOST: [REPLACE_WITH_REDIS_IP_OR_DOMAIN] # 例: redis
+    REDIS_PORT: [REPLACE_WITH_REDIS_PORT] # 例: 6379
+    CLICKHOUSE_HOST: [REPLACE_WITH_CLICKHOUSE_DB_HOST_IP_OR_DOMAIN] # 例clickhouse-server
+    CLICKHOUSE_KAFKA_HOSTS: [REPLACE_WITH_KAFKA_CONNECTION_STRING] # 例kafka:9092
+    # 以下の環境変数はセキュリティ関連です。これらはオプションです
+    # redis pwdがある場合
     REDIS_PASSWORD: [REPLACE_WITH_REDIS_PWD]
-    KAFKA_SECURITY_PROTOCOL: [REPLACE_WITH_KAFKA_SECURITY_PROTOCOL] # one of PLAINTEXT, SASL_PLAINTEXT, SASL_SSL, SSL
-    # if kafka security protocol is in SASL_PLAINTEXT, SASL_SSL, set the following 3 variables
+    KAFKA_SECURITY_PROTOCOL: [REPLACE_WITH_KAFKA_SECURITY_PROTOCOL] # PLAINTEXT, SASL_PLAINTEXT, SASL_SSL, SSLのいずれか
+    # kafkaセキュリティプロトコールがSASL_PLAINTEXT, SASL_SSLのいずれかの場合、以下の3つの変数を設定してください
     # KAFKA_SASL_MECHANISM: [REPLACE_WITH_KAFKA_SASL_MECHANISM]
     # KAFKA_SASL_USER: [REPLACE_WITH_KAFKA_SASL_USER]
     # KAFKA_SASL_PASSWORD: [REPLACE_WITH_KAFKA_SASL_PASSWORD]
@@ -121,11 +123,11 @@ networks:
     external: true
 ```
 
-## データのシーディング
+## データシーディング
 
 ### Kafkaトピック
 
-次のトピックをkafkaに作成する必要があります:
+カフカに以下のトピックを作成する必要があります：
 
 * featbit-feature-flag-change
 * featbit-segment-change
@@ -134,28 +136,28 @@ networks:
 
 ### MongoDB
 
-[MongoDBのシードスクリプト](https://github.com/featbit/featbit/blob/main/infra/mongodb/docker-entrypoint-initdb.d/init.js)を提供しています。このスクリプトは、データベース名が "featbit" であること（変更できます）を前提としています。このデータベース名は、MongoDb\_\_Database環境変数と同じでなければなりません。
+MongoDBデータベースをシードするための[mongodb-seed-script](https://github.com/featbit/featbit/blob/main/infra/mongodb/docker-entrypoint-initdb.d/init.js)を提供しています。このスクリプトは、データベース名が「featbit」であることを前提としています（変更可能）で、これはMongoDb\_\_Database環境変数と同一でなければなりません。
 
-以下のコマンドまたは他のツールでシードスクリプトを実行できます。
+以下のコマンドまたはその他のツールでシードスクリプトを実行できます。
 
 ```sh
 mongo < init.js
-# or mongosh < init.js
+# または mongosh < init.js
 ```
 
 ## インストール
 
-*   Docker Composeファイルを編集したら、次のコマンドを実行します
+*   docker composeファイルの変更を終えたら、以下のコマンドを実行してください
 ```bash
 docker compose -f docker-compose-partial.yml up -d
 ```
-* すべてのコンテナが起動したら、FeatBitのポータル [http://localhost:8081](http://localhost:8081/) にアクセスし、デフォルトの認証情報を使用してログインします。
+* すべてのコンテナが起動したら、FeatBitのポータル [http://localhost:8081](http://localhost:8081/) にアクセスしてデフォルトの資格情報を使ってログインしてください。
   * ユーザー名: **test@featbit.com**
   * パスワード: **123456**
 
-## アップデート
+## 更新
 
-最新のFeatBitイメージに更新するには、次のコマンドを実行します:
+最新のFeatBitイメージに更新するには、以下のコマンドを実行します：
 
 ```bash
 docker-compose pull
@@ -165,5 +167,6 @@ docker-compose up -d
 
 ## FAQ
 
-* [Dockerコンテナのポートが競合する問題を解決するにはどうすればよいですか？](faq.md#how-to-solve-docker-container-port-conflict-problem)
-* [FeatBitポータルを公開可能にするにはどうすればよいですか？](faq.md#how-to-make-featbit-portal-accessible-publicly)
+* [dockerコンテナのポート衝突問題を解決する方法は？](faq.md#dockerコンテナのポート衝突問題を解決する方法)
+* [FeatBitポータルを公開でアクセス可能にする方法は？](faq.md#featbitポータルを公開でアクセス可能にする方法) 
+```

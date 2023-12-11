@@ -1,16 +1,16 @@
-# FAQ
+# よくある質問
 
-### Dockerコンテナのポート競合問題の解決方法
+### Dockerコンテナーポートの競合問題の解決方法
 
-**Q:** `docker-compose up -d`を実行する際のDockerコンテナのポート競合問題を解決する方法は？
+**Q:** `docker compose up -d`を実行するときに、Dockerコンテナーポートの競合問題をどのように解決すればよいですか？
 
-**A:** 単にdocker-compose.yml内のコンテナポートを変更する必要があります。
+**A:** docker-compose.yml内のコンテナーポートを変更する必要があります。
 
-たとえば、すでにホストマシンのポート6379を使用しているRedisコンテナがある場合、`docker-compose up -d`を使用してシステムを起動しようとすると、次のようなDockerデーモンからのポート競合エラーが表示されることがあります。
+例えば、ホストマシンのポート6379を使用しているRedisコンテナがすでにある場合、`docker-compose up -d`でシステムを起動しようとすると、次のようなDockerデーモンからのポート競合エラーが表示されます
 
 ![](./assets/faq/001.webp)
 
-この問題を解決するには、**docker-compose.yml**に移動し、Redisサービスを見つけて、バインディングポートを6379以外の適切な値に変更します。
+この問題を解決するには、**docker-compose.yml**に移動し、Redisサービスを見つけて、6379以外のバインディングポートに変更します。
 
 ```yaml
 # redis service
@@ -23,17 +23,17 @@ redis:
   networks:
     - featbit-network
   ports:
-    # バインディングポートを6380に変更します
+    # バインディングポートを6380に変更
     - "6380:6379"
   volumes:
     - redis:/data
 ```
 
-### FeatBitポータルを公開アクセス可能にする方法
+### FeatBitポータルを一般公開可能にする方法
 
-デフォルトの設定では、FeatBitのポータルは、docker composeを実行したローカルマシンからのみアクセス可能です。
+デフォルトの構成では、FeatBitのポータルはdocker composeを実行しているローカルマシンからのみアクセス可能です。
 
-UIを他のマシンやインターネットからアクセス可能にするには、実行しているマシンに公開IPまたはドメイン名が必要です。さらに、APIサービスと評価サービスがUIサービスとは異なるマシンで実行されている場合は、それらに対しても公開IPアドレスまたはドメイン名が必要になる場合があります。次に、docker-composeファイルで**API\_URL**と**EVALUATION\_URL**の正しい値を設定します。詳細な説明については、FeatBitの[標準版](../tech-stack/architecture)および[プロフェッショナル版](../tech-stack/architecture-professional)のアーキテクチャドキュメントを参照してください。
+UIを他のマシンやインターネットからアクセス可能にするには、実行中のマシンに公開IPまたはドメイン名が必要です。また、APIおよび評価サービスがUIサービスとは異なるマシンで実行されている場合は、それらのためにも公開IPアドレスまたはドメイン名が必要になります。その後、docker-composeファイルで**API\_URL**と**EVALUATION\_URL**の正しい値を設定します。FeatBitのすべてのサービスについての詳しい説明については、[標準版](../tech-stack/architecture)および[プロフェッショナル版](../tech-stack/architecture-professional)のアーキテクチャドキュメントをご確認ください。
 
 ```yaml
 # docker-compose.yml
@@ -43,7 +43,7 @@ ui:
   environment:
     # 例: 192.168.56.1:5000
     - API_URL=http://[APIサーバーのIPまたはドメインで置き換え]
-    # チュートリアル用なのでそのままにしておきます
+    # このままにしておいてください。これはチュートリアル用です
     - DEMO_URL=https://featbit-samples.vercel.app
     # 例: 192.168.56.1:5100
     - EVALUATION_URL=http://[評価サーバーのIPまたはドメインで置き換え]
@@ -55,9 +55,9 @@ ui:
     - featbit-network
 ```
 
-### Azure Cosmos DBを使用したFeatBitの利用方法
+### Azure Cosmos DBを使用したFeatBitの利用
 
-Cosmos DBでは、ソートされるフィールドに常にインデックスが必要です。Cosmos DBを使用するためには、これらのインデックスを手動で作成する必要があります。以下はそれらを作成するためのスクリプトです。
+Cosmos DBでは常にソートされたフィールドにインデックスが必要です。Cosmos DBをFeatBitと共に使用するには、これらのインデックスを手動で作成する必要があります。以下はそれらを作成するためのスクリプトです:
 
 ```javascript
 const createdAtCollections = ["RelayProxies", "Projects", "AccessTokens", "Policies", "AuditLogs"];

@@ -1,74 +1,75 @@
+```markdown
 import { Callout } from 'nextra/components'
 
 # 3. SDKの接続
+SDKの使用は、ソフトウェアをフィーチャーフラグを介して提供、制御、実験する方法を理解するための不可欠なスキルです。
 
-SDKの使用は、ソフトウェアをフィーチャーフラグを通じて提供し、制御し、実験するための理解に必要不可欠なスキルです。
+最後のステップ「デモとのやり取りを試す」で、ゲームコンポーネントを表示/非表示にしたり、ゲームの難易度モードを切り替える方法を学びました。次は、コードでの実装方法を見てみましょう。
 
- 最後のステップ「デモとの対話を試す」では、ゲームコンポーネントを表示/非表示にするためのフィーチャーフラグの使用方法、およびゲームの難易度モードを切り替える方法を学びました。では、それがコードでどのように実装されているかを見てみましょう。
+## ポータル内のガイドに従う
+最も簡単な方法は、ポータルの「はじめに」ページの手順に従うことです。ポータルでは、次のことができます
 
-## ポータルのガイドに従います
-
-最も簡単な方法は、ポータルの「はじめに」ページの指示に従うことです。ポータルでは、次の操作が可能です。
-
-**ステップ1**。以前のステップで作成したフィーチャーフラグのいずれかを選択します。次へボタンをクリックしてステップ2に進みます。
+**ステップ 1**. 前のステップで作成したフィーチャーフラグの1つを選択します。次に、「次へ」ボタンをクリックしてステップ2に進みます。
 
 ![](../getting-started/assets/connect-to-sdk/001.png)
 
-**ステップ2**。使い慣れているプログラミング言語を選択します。自動的に生成されたコードをコピーして、IDEで実行します。
+**ステップ 2**. 自分の使い慣れたプログラミング言語を選択します。自動的に生成されたコードをコピーしてIDEで実行します。
 
 ![](../getting-started/assets/connect-to-sdk/002.png)
 
-ポータルによって生成されるコードには、次のような必要な要素が含まれています：
+ポータルによって生成されたコードには、次のようなすべての必要な要素が含まれています。
 
 - SDKのインストール
 - サーバーURL、環境キーを使用したSDKの初期化
-- カスタマイズしたプロパティでユーザーの識別
+- カスタマイズされたプロパティを持つユーザーの識別
 - フィーチャーフラグの実装
 - フィーチャーフラグの評価
 - フィーチャーフラグの更新リスナー
-- などなど
+- その他
 
 ![](../getting-started/assets/connect-to-sdk/003.png)
 
 
-## 手動でSDKを接続します
+## SDKを手動で接続する
 
-クライアントサイド、サーバーサイド、モバイルのSDKのさまざまな選択肢を提供しています。クイックスタートの完了を加速するために、自分が得意な言語を選択することができます。
+クライアントサイド、サーバーサイド、モバイルのSDKを幅広く提供しています。自分の得意な言語を選んでクイックスタートを完了するのに役立ちます。
 
 <Callout type="info" emoji="👾">
-  私たちのSDKを使用することをお勧めします。なぜなら、私たちはすでにベストプラクティスを実装しているからです。
+  私たちのSDKを使用することをお勧めします。なぜなら、私たちがすでにベストプラクティスを実装しているからです。
 </Callout>
 
 ### Javascript
 
-クライアントサイドの [Javascript/Typescript SDK](https://github.com/featbit/featbit-js-client-sdk) を提供しています。[React](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-react) および [Vue](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-vue) 向けの「Dino Game」サンプルも用意しています。このSDKはTypescript、React、Vue、Angularなどと完全に互換性があります。
+クライアントサイドの[Javascript/Typescript SDK](https://github.com/featbit/featbit-js-client-sdk)を提供しています。また、[React](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-react)および[Vue](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-vue)向けの「Dino Game」サンプルも提供しています。このSDKは、Typescript、React、Vue、Angularなどと完全に互換性があります。
 
-SDKのGitHubリポジトリには、使用方法の詳しいチュートリアルが含まれています。また、試すためのサンプルプロジェクトも提供されています。
+SDKのGitHubリポジトリには、その使用方法に関する完全なチュートリアルが含まれています。また、お試しいただけるサンプルプロジェクトも提供しています。
 
 ### .NET
 
-[サーバーサイドの.NET SDK](https://github.com/featbit/featbit-dotnet-sdk) を提供しています。このSDKは、コンソールアプリケーションやASP.NET Coreアプリケーションなどで使用することができます。
+[サーバーサイドの.NET SDK](https://github.com/featbit/featbit-dotnet-sdk)も提供しています。このSDKは、コンソールアプリやASP.NET Coreアプリで使用できます。
 
-また、WPF、WinForm、MAUIなどのフロントエンドアプリケーションでも使用することができます。ただし、実際のモバイルSDKよりもバッテリーの消費量が多いため、モバイルアプリケーションでの使用はおすすめしません。
+また、WPF、WinForm、MAUIなどのフロントエンドアプリケーションにも対応しています。ただし、実際のモバイルSDKよりもバッテリー消費が大きいため、モバイルアプリケーションでは使用をお勧めしません。
 
-SDKのGitHubリポジトリには、使用方法の詳しいチュートリアルが含まれています。また、試すためのサンプルプロジェクトも提供されています。
+SDKのGitHubリポジトリには、その使用方法に関する完全なチュートリアルが含まれています。また、お試しいただけるサンプルプロジェクトも提供しています。
 
 ### Java
 
-[Java SDK](https://github.com/featbit/featbit-java-sdk) を提供しています。このSDKは、コンソールアプリケーションやSpring Bootアプリケーションで使用することができます。
+[Java SDK](https://github.com/featbit/featbit-java-sdk)も提供しています。このSDKは、コンソールアプリやSpring Bootアプリで使用できます。
 
-SDKのGitHubリポジトリには、使用方法の詳しいチュートリアルが含まれています。また、試すためのサンプルプロジェクトも提供されています。
+SDKのGitHubリポジトリには、その使用方法に関する完全なチュートリアルが含まれています。また、お試しいただけるサンプルプロジェクトも提供しています。
 
 ### Python
 
-[Python SDK](https://github.com/featbit/featbit-python-sdk) を提供しています。このSDKのGitHubリポジトリには、使用方法の詳しいチュートリアルが含まれています。また、試すためのサンプルプロジェクトも提供されています。
+[Python SDK](https://github.com/featbit/featbit-python-sdk)も提供しています。SDKのGitHubリポジトリには、その使用方法に関する完全なチュートリアルが含まれています。また、お試しいただけるサンプルプロジェクトも提供しています。
 
 ### Go
 
-[Go SDK](https://github.com/featbit/featbit-go-sdk) を提供しています。このSDKのGitHubリポジトリには、使用方法の詳しいチュートリアルが含まれています。また、試すためのサンプルプロジェクトも提供されています。
+[Go SDK](https://github.com/featbit/featbit-go-sdk)も提供しています。SDKのGitHubリポジトリには、その使用方法に関する完全なチュートリアルが含まれています。また、お試しいただけるサンプルプロジェクトも提供しています。
+
 
 ### REST APIとWebSocket
 
-まだSDKが提供されていない他の言語やフレームワークの場合、REST APIを使用してフィーチャーフラグを取得することができます。ドキュメントは[こちら](../api-docs/get-users-feature-flags-with-api)を参照してください。
+まだSDKを提供していないその他の言語やフレームワークの場合は、REST APIを使用してフィーチャーフラグを取得できます。ドキュメントは[こちら](../api-docs/get-users-feature-flags-with-api)を参照してください。
 
-リアルタイムのフィーチャーフラグの更新を取得するためには、WebSocketインタフェースを使用できます。この機能についての詳細情報は、私たちのSlackチャンネルに参加してください。
+リアルタイムのフィーチャーフラグ更新を取得するには、WebSocketインターフェースをご利用いただけます。この機能についての詳細情報をお知りになるには、私たちのSlackチャンネルにご参加ください。
+```

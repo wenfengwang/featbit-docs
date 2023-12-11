@@ -1,30 +1,31 @@
+```markdown
 import { Callout } from 'nextra/components'
 
 # API
 
 <Callout type="info">
-現在の記事では、FeatBit REST APIへのリクエストの方法についての一般的な紹介をしています。各APIの完全なリストとそれぞれの使用方法については、[こちら](https://featbit-tio-eu-api.azurewebsites.net/docs/index.html)にRedocで作成されたドキュメントが利用可能です。FeatBitをローカルまたはサーバーで実行している場合は、次のURLにアクセスできます: <strong>URL\_OF\_API\_SERVER/docs.</strong> 例えば、ローカルマシンでFeatBitを実行している場合は、次のURLにアクセスできます: <strong>http://localhost:5000/docs</strong>。
+現在の記事はFeatBit REST APIへのリクエストの作り方の一般的な紹介です。APIの完全なリストやそれぞれの使用方法については、[こちら](https://featbit-tio-eu-api.azurewebsites.net/docs/index.html)にRedocで生成されたドキュメントが利用できます。FeatBitをローカルやサーバーで実行している場合は、次のURLにポイントすることもできます：<strong>URL\_OF\_API\_SERVER/docs.</strong> たとえば、FeatBitをhttpsなしでローカルマシンで実行している場合は、次のようなURLになります：<strong>http://localhost:5000/docs</strong> 。
 </Callout>
 
 ### 認証
 
-すべてのREST APIリソースは、[個人アクセストークンまたはサービスアクセストークン](../integrations/api-access-tokens.md)を使用して認証されます。他の認証メカニズムはサポートされていません。個人アクセストークンは**Integration/Access tokens**ページで管理できます。
+すべてのREST APIリソースは、[個人アクセス・サービスアクセストークン](../integrations/api-access-tokens.md)のいずれかで認証されます。他の認証メカニズムはサポートされていません。個人アクセス・トークンは、「統合/アクセス・トークン」ページで管理できます。
 
-#### リクエストヘッダを使用した認証
+#### リクエスト・ヘッダーを使用した認証
 
-APIとの認証方法は、リクエストにアクセストークンを含む`Authorization`ヘッダを追加することです。`Authorization`ヘッダの値はアクセストークンでなければなりません。このヘッダを追加する方法については、[Using FeatBit REST API](using-featbit-rest-api.md)を参照してください。
+APIとの認証の唯一の方法は、要求に含まれる`Authorization`ヘッダーにアクセストークンを含めることです。`Authorization`ヘッダーの値はアクセストークンである必要があります。このヘッダーの追加方法については、[FeatBit REST APIの使用](using-featbit-rest-api.md)を参照してください。
 
 ### 表現
 
-すべてのリソースはJSON応答ボディを期待し、JSON応答ボディを返します。エラーレスポンスもJSONボディを送信します。APIのエラーフォーマットについては、[エラー](overview.md#errors)を読んでください。
+すべてのリソースはJSONレスポンスボディの受け取りと返送を想定しています。エラーレスポンスもJSONボディを送信します。APIのエラー形式について詳しくは、[Errors](overview.md#errors)を読んでください。
 
-このことから、常に`Content-Type`ヘッダが`application/json`に設定された応答を受け取ることになります。
+これはつまり、常に`application/json`として設定された`Content-Type`ヘッダーのレスポンスを受け取ることになります。
 
-さらに、`PATCH`、`POST`、`PUT`リクエストのリクエストボディは、`Content-Type`ヘッダが`application/json`に設定されたJSONでエンコードする必要があります。
+さらに、`PATCH`、`POST`、`PUT`のリクエストボディは、`application/json`としてエンコードする必要があります。
 
 ### エラー
 
-APIは常に共通の形式でエラーを返します。以下は例です：
+APIは常に共通のフォーマットでエラーを返します。以下はその例です：
 
 ```json
 {
@@ -36,11 +37,11 @@ APIは常に共通の形式でエラーを返します。以下は例です：
 }
 ```
 
-**errors**はエラーの一般的なクラスを示します。
+**errors**は一般的なエラークラスを示しています。
 
 ### CORS
 
-FeatBit APIは、任意のオリジンからのAJAXリクエストに対してクロスオリジンリソース共有（CORS）をサポートしています。リクエストに`Origin`ヘッダーが指定されている場合、許可されたオリジンとしてエコーバックされます。それ以外の場合、リクエストはワイルドカード`Access-Control-Allow-Origin: *`を返します。CORSについての詳細は、[CORS W3C Recommendation](http://www.w3.org/TR/cors)を参照してください。例えば、CORSのヘッダーは以下のようになります:
+FeatBit APIは、任意のオリジンからのAJAXリクエストのためのCross Origin Resource Sharing（CORS）をサポートしています。リクエストに`Origin`ヘッダーが含まれている場合、明示的に許可されたオリジンとしてエコーされます。それ以外の場合は、ワイルドカード`Access-Control-Allow-Origin: *`がリクエストに対して返されます。CORSに関する詳細は、[CORS W3C Recommendation](http://www.w3.org/TR/cors)を参照してください。例えば、CORSヘッダーは次のようなものです：
 
 ```
 Access-Control-Allow-Headers: Accept, Content-Type, Content-Length, Accept-Encoding, Authorization
@@ -49,4 +50,5 @@ Access-Control-Allow-Origin: *
 Access-Control-Max-Age: 300
 ```
 
-アクセストークン認証を使用して、同じオリジンの呼び出しと同じように、認証付きのCORS呼び出しを行うことができます。アクセストークンを信用できないエンティティに公開しないでください。
+認証付きのCORSリクエストは、同オリジンリクエストと同様に行うことができます。アクセストークン認証を使用して認証されたCORS呼び出しを、信頼されていないエンティティに公開してはなりません。
+```

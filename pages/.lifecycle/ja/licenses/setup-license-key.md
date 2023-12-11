@@ -1,50 +1,50 @@
 import {Callout} from 'nextra/components'
 
-# ライセンスキーの設定
+# ライセンスキーのセットアップ
 
 <Callout type="info">
-  この記事は FeatBit 3.0.0 以降と互換性があります。
+  この記事はFeatBit 3.0.0以降と互換性があります。
 </Callout>
 
-このガイドでは、ライセンスキーを使用して FeatBit の設定方法を示します。
+このガイドは、ライセンスキーを使用してFeatBitを設定するプロセスを説明します。
 
-## ワークスペース ID の取得
+## ワークスペースIDの取得
 
-ライセンスキーを取得する前に、ワークスペース ID が必要です。次の手順に従ってください。
+ライセンスキーを取得する前に、ワークスペースIDが必要です。以下の手順に従ってください：
 
-1. FeatBit が実行されていることを確認し、FeatBit ユーザーインターフェースが http://localhost:8081 で利用可能であると想定します。
-2. メールアドレスとパスワードを使用して FeatBit にログインします。デフォルトの設定の場合、次の情報を使用します：
-   - ユーザー名：test@featbit.com
-   - パスワード：123456
-   
-3. http://localhost:8081/en/workspace に移動し、**ライセンス設定** セクションで **コピー** ボタンをクリックします。
+1. FeatBitが実行中であることを確認し、FeatBit UIが http://localhost:8081 で利用可能であることを前提とします。
+2. あなたのメールとパスワードを使用してFeatBitにログインします。デフォルト設定では、次を使用します：
+   - ユーザーネーム: test@featbit.com
+   - パスワード: 123456
+  
+3. http://localhost:8081/en/workspace に行き、**ライセンス設定**セクションで**コピー**ボタンをクリックします
    
    ![](./assets/workspaceid.png)
 
 ## 無料トライアルライセンスキーの取得
 
-すべての FeatBit の機能を評価するために、[FeatBit ダッシュボード](https://dashboard.featbit.co/account)から無料トライアルライセンスキーを生成します：
+FeatBitのすべての機能を評価するために、[FeatBit Dashboard](https://dashboard.featbit.co/account)から無料のトライアルライセンスキーを生成します：
 
-- メールアドレスを使用してアカウントを作成するか、GitHub を介してログインします。
-- **アカウント** ページで **トライアルライセンスを生成** をクリックします。
+- メールを使ってアカウントを作成するか、GitHub経由でログインします。
+- **アカウント**ページで**トライアルライセンスの生成**をクリックします。
 
   ![](./assets/request-trial-license1.png)
-- モーダルに会社名とワークスペース ID を入力し、**OK** をクリックします。
+- モーダルにあなたの会社名とワークスペースIDを入力し、**OK**をクリックします。
 
   ![](./assets/request-trial-license2.png)
-- ライセンステーブル内の生成されたライセンスを見つけ、コピーをクリックします。
+- ライセンステーブルで生成されたライセンスを見つけ、コピーをクリックします。
 
   ![](./assets/request-trial-license3.png)
 
 ## 商用ライセンスキーの取得
 
-商用ライセンスキーを取得するには、[contact@featbit.co](mailto:contact@featbit.co) までメールを送信するか、[Slack チャンネル](https://join.slack.com/t/featbit/shared_invite/zt-1ew5e2vbb-x6Apan1xZOaYMnFzqZkGNQ)に参加し、迅速に対応します。
+商用ライセンスキーについては、[contact@featbit.co](mailto:contact@featbit.co)にメールを送るか、私たちの[Slack Channel](https://join.slack.com/t/featbit/shared_invite/zt-1ew5e2vbb-x6Apan1xZOaYMnFzqZkGNQ)に加入し、迅速に対応します。
 ## ライセンスキーのアップロード
 
-次に、http://localhost:8081/en/workspace に戻り、**ライセンス設定** セクションに移動し、以前に取得したライセンスキーを入力し、**更新** をクリックします。
+今度はhttp://localhost:8081/en/workspaceに戻り、**ライセンス設定**セクションに先ほど取得したライセンスキーを入力し、**更新**をクリックします。
 
 ![](./assets/save_license_key.png)
 
-保存したら、エンタープライズボタンの上にカーソルを合わせると、以下のようにライセンスの詳細を表示することができます。
+保存後、エンタープライズボタンにマウスを合わせると、次のようにライセンスの詳細を表示できます
 
 ![](./assets/check-license.png)

@@ -1,6 +1,9 @@
+```javascript
 import '../styles/main.css'
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
+
+
 
 export default function App({ Component, pageProps }) {
   if (typeof window !== 'undefined') {
@@ -14,3 +17,4 @@ export default function App({ Component, pageProps }) {
   }
   return <Component {...pageProps} />
 }
+```

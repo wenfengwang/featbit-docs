@@ -1,37 +1,41 @@
 # FAQ
 
-**REST APIエンドポイントを取得する方法**
+**REST API エンドポイントの取得方法**
 
-1. **始めましょう**ページに移動します
-2. 特徴フラグを作成するか、既存の特徴フラグを選択し、次に進みます
-3. **SDK設定**セクションから**Open APIエンドポイント**をコピーします
-
+1. **はじめに** ページに移動します
+2. フィーチャーフラグを作成するか、既存のフラグを選択して次に進みます
+3. **SDK Configs** セクションから **Open API エンドポイント** をコピーします
+   
+1. **はじめに** ページに移動します
+2. フィーチャーフラグを作成するか、既存のフラグを選択して次に進みます
+3. **SDK Configs** セクションから **Open API エンドポイント** をコピーします
+   
 ![](/assets/faq/001.png)
 
-## REST APIドキュメントを確認する方法
+## REST API ドキュメントの確認方法
 
-REST APIドキュメントを確認する方法は2つあります
+REST API ドキュメントを確認する方法は2つあります
 
-1. デモサイトで確認できます： [https://featbit-tio-eu-api.azurewebsites.net/docs/index.html](https://featbit-tio-eu-api.azurewebsites.net/docs/index.html)
-2. FeatBitをオンプレミスで実行している場合は、**OPEN APIエンドポイント**を見つけ、接尾辞**/docs/index.html**を追加します
+1. デモサイトで確認できます：[https://featbit-tio-eu-api.azurewebsites.net/docs/index.html](https://featbit-tio-eu-api.azurewebsites.net/docs/index.html)
+2. オンプレミスで FeatBit を実行している場合は、**OPEN API エンドポイント** を見つけて接尾辞 **/docs/index.html** を追加します
 
 ![](/assets/faq/002.png)
 
-例えば：上記の例では**http://localhost:5000/docs/index.html**となります。
+例：上記の例では、**http://localhost:5000/docs/index.html** となります。
 
-## 特徴フラグの定義
+## フィーチャーフラグの定義
 
-特徴フラグはFeatBitの主要なエンティティであり、以下のドキュメントでその定義を説明します。
+フィーチャーフラグは FeatBit の主要なエンティティであり、以下のドキュメントでその定義が説明されています。
 
-### 特徴フラグの構造
+### フィーチャーフラグの構造
 
-特徴フラグAPIを使用すると、パーセンテージの展開、特定のコンテキストのターゲット指定、またはプログラム上での機能の切り替えが可能です。特徴フラグの表現を見ることで、これらのタスクをどのように行うかがわかります。
+フィーチャーフラグ API を使用すると、パーセンテージの展開、特定のコンテキストへのターゲット指定、あるいは機能をプログラムでトグルすることが可能です。フィーチャーフラグの表現を見ることで、これらのタスクのどれを実行するかがわかります。
 
 ```json
 {
   "envId": "a244b0fe-63ff-49e8-a949-e113383ba3e7",
-  "name": "アクセストークンの有効化",
-  "description": "このフラグはアクセストークン機能を操作します",
+  "name": "enable access token",
+  "description": "This flag manipulate the access token feature",
   "key": "enable-access-token",
   "variationType": "boolean",
   "variations": [
@@ -57,7 +61,7 @@ REST APIドキュメントを確認する方法は2つあります
   "rules": [
     {
       "id": "aa1641dc-6e20-44ff-8f60-afe5c5e7c447",
-      "name": "ルール1",
+      "name": "Rule 1",
       "dispatchKey": null,
       "includedInExpt": false,
       "conditions": [

@@ -1,7 +1,7 @@
 ```
 import { Callout } from 'nextra/components'
 
-# APIを使用してユーザーの機能フラグを取得する
+# APIを使用してユーザーのフィーチャーフラグを取得する
 
-REST APIを使用してユーザーのすべての機能フラグを取得したい場合、またはREST APIを使用してすべての機能フラグの設定を取得したい場合、[SDKセクションの対応するドキュメントを読む](../sdk/retrieve-feature-flags-with-api.md)ことができます。
+REST APIを使用してユーザーのすべてのフィーチャーフラグを取得したい場合や、REST APIですべてのフィーチャーフラグの設定を取得したい場合には、[SDKセクションの該当する文書](../sdk/retrieve-feature-flags-with-api.md)を参照してください。
 ```

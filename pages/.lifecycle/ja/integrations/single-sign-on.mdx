@@ -1,95 +1,99 @@
-import { Callout } from 'nextra/components'
+```markdown
+import {Callout} from 'nextra/components'
 
 # シングルサインオン
 
 <Callout type="info">
-    この記事は FeatBit 3.0.0 以降と互換性があります。
+    この記事は FeatBit 3.0.0 およびそれ以上のバージョンと互換性があります。
 </Callout>
 
 <Callout type="info">
-    シングルサインオン機能はエンタープライズサブスクリプションのお客様のみご利用いただけます。詳細については [FeatBitプラン](https://dashboard.featbit.co/en) をご確認ください。また、トライアルライセンスでこの機能をお試しいただけます。トライアルライセンスはこちらから生成できます [Featbit ダッシュボード](https://dashboard.featbit.co/account)。
+    シングルサインオン機能は、エンタープライズサブスクリプションを利用している顧客のみ利用可能です。[FeatBitのプラン](https://dashboard.featbit.co/en) を確認して詳細をご覧ください。また、トライアルライセンスを使用してこの機能をお試しいただくこともできます。トライアルライセンスは[Featbitダッシュボード](https://dashboard.featbit.co/account) で生成できます。
 </Callout>
 
-FeatBit Self-hostedでは、OpenID Connectを介してSSOを利用することができます。SSOを有効にするためには、アクティブなライセンスキーが必要であり、その後、プロバイダーのためのSSO設定を追加することができます。
+SSO は OpenID Connect を介した FeatBit セルフホストで利用できます。セルフホスト型の FeatBit インスタンスで SSO を有効にするには、アクティブなライセンスキーが必要で、それからプロバイダーのための SSO 設定を追加する必要があります。
 
-## SSOの設定
+## SSO 設定
 
-SSOを有効にするには、以下の設定を追加する必要があります
+SSO を有効にするために、以下の設定を追加する必要があります
 
-### FeatBit Apiサービスの環境変数を追加する
+### FeatBit Api サービスの環境変数を追加
 
-- `SSOEnabled`： SSOを有効にする場合は `true` に設定します。
+- `SSOEnabled`: SSO を有効にするには、`true` に設定します。
 
-### UIを介してOpenId Connectの設定を追加する
+### UI を使用した OpenId Connect 設定を追加
 
-FeatBitが正常に起動したら、以下の設定を追加するためにUI **http://localhost:8081/workspace** に移動してください。
+FeatBit が正常に起動したら、UI **http://localhost:8081/workspace** に移動して、以下の設定を追加してください:
 
-- `clientId`：OIDCクライアントID。
-- `clientSecret`：OIDCクライアントシークレット。
-- `redirectUri`：OIDCリダイレクトURI。
-- `tokenEndpoint`：OIDCトークンエンドポイント。
-- `clientAuthenticationMethod`：OIDCクライアント認証方法。大抵は`client_secret_post`に設定されますが、`client_secret_basic`もサポートしています。
-- `authorizationEndpoint`：OIDC認可エンドポイント。
-- `scope`：リクエストするOIDCスコープ。大抵は `openid profile email`に設定されます。
-- `userEmailClaim`：OIDCユーザーのメールクレーム。上記のスコープを使用する場合は `email` に設定します。
+- `clientId`: OIDC クライアント ID。
+- `clientSecret`: OIDC クライアントシークレット。
+- `redirectUri`: OIDC リダイレクト URI。
+- `tokenEndpoint`: OIDC トークンエンドポイント。
+- `clientAuthenticationMethod`: OIDC クライアントの認証方法。ほとんどの場合は `client_secret_post` に設定しますが、`client_secret_basic` もサポートしています。
+- `authorizationEndpoint`: OIDC 認可エンドポイント。
+- `scope`: リクエストする OIDC スコープ。ほとんどの場合は `openid profile email` に設定します。
+- `userEmailClaim`: OIDC ユーザーのメールクレーム。上記のスコープを使用する場合は `email` に設定します。
 
 ## 例
 
-FeatBit SSOを**Keycloak、Okta、およびAuth0**でテストしました。以下はKeycloakを使用した手順です。
+FeatBit SSO は Keycloak、Okta、Auth0 との連携をテストしています。以下は Keycloak を使用した手順です。
 
-### 1. Keycloakを実行する
-DockerからKeycloakを実行し、管理コンソールに `admin` / `admin` でログインします [localhost:9000](http://localhost:9000)
+### 1. Keycloak を実行
+
+Docker から keycloak を実行し、`admin`/`admin` で管理コンソールにログインします [localhost:9000](http://localhost:9000)
 
 ```bash
 docker run -d -p 9000:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin --name=keycloak quay.io/keycloak/keycloak:22.0.1 start-dev
 ```
 
-### 2. レルムの作成
+### 2. レルムを作成
 
-`featbit` という新しいレルムを作成し、そのレルムに切り替えます
+`featbit` という新しいレルムを作成し、そのレルムに切り替えます。
 
 ![](../integrations/assets/single-sign-on/create-realm.png)
 
-### 3. OIDCクライアントの作成
+### 3. OIDC クライアントを作成
 
-次の設定でOIDCクライアントを作成します。いくつか重要な設定は次のとおりです：
-- クライアントの `有効なリダイレクトURIs` を http://localhost:8081/* (FeatBit UI サービスアドレス)に設定します。
-- クライアントの `Web Origins` を http://localhost:8081/* (FeatBit UI サービスアドレス)に設定します。
+以下の設定で OIDC クライアントを作成します。以下はいくつかの重要な設定です:
+- クライアントの有効なリダイレクト URI を http://localhost:8081/* (FeatBit UI サービスアドレス) に設定します。
+- クライアントの Web Origins を http://localhost:8081/* (FeatBit UI サービスアドレス) に設定します。
 - クライアント認証を有効にします
 
 ![](../integrations/assets/single-sign-on/client-settings.png)
 
-### 4. ユーザーの作成
-KeyCloakでユーザーを作成し、そのユーザーにパスワードを設定します。
+### 4. ユーザーを作成
 
-### 5. FeatBitを起動する
+KeyCloak でユーザーを作成し、そのユーザーのためにパスワードを設定します
 
-`docker-compose.yml`のFeatBit Apiサービスのために、以下の環境変数を設定します。
+### 5. FeatBit を起動
+
+`docker-compose.yml` で FeatBit Api サービスのために以下の環境変数を設定します。
 
 ```yaml
 SSOEnabled=true
 ```
 
-FeatBitを起動し、ログインページでSSOタブを表示できるはずです。
+FeatBit を起動し、ログインページで SSO タブが表示されるはずです。
 ```bash
 cd featbit
 docker-compose up -d
 ```
 ![](../integrations/assets/single-sign-on/sso-login.png)
 
-次に、`Login` タブをクリックし、デフォルトの資格情報 `test@featbit.com` / `123456` でログインします。
+その後、`Login` タブをクリックし、デフォルトの資格情報 `test@featbit.com`/`123456` でログインします。
 
-### 6. OIDC設定の構成
+### 6. OIDC 設定を構成
 
-**http://localhost:8081/workspace** に移動し、OpenID Connectの設定を追加し、**更新** をクリックします。クライアントシークレットは独自の値に置き換えてください。
+**http://localhost:8081/workspace** に移動し、OpenID Connect 設定を追加し **Update** をクリックし、クライアントシークレットをご自身の値で置き換えてください
 
 ![](../integrations/assets/single-sign-on/oidc-settings.png)
 
-### 7. SSOでログインする
+### 7. SSO でログイン
 
-**一般設定** からワークスペースキーをコピーし、SSOでログインする際に必要です。
+**一般設定** でワークスペースキーをコピーし、SSO でログインする際にそのキーが必要になります。
 
 ![](../integrations/assets/single-sign-on/ws-key.png)
 
-ログアウトし、SSOをクリックして、以前にコピーしたワークスペースキーを使用します。
-**続行** をクリックすると、ブラウザがKeycloakのログインページに移動し、事前に作成したユーザーでログインできます。
+ログアウトして SSO をクリックし、先ほどコピーしたワークスペースキーを使用します。
+**続行** をクリックし、ブラウザは Keycloak ログインページに移動し、その後、以前に作成したユーザーでログインできるはずです。
+```

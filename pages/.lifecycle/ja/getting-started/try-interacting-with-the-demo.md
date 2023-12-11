@@ -1,18 +1,17 @@
-# 2. デモとのインタラクションを試す
+# 2. デモとの対話を試みる
 
-前のステップで「ゲームランナー」と「難易度モード」という2つのフィーチャーフラグを作成しました。これらのフラグを使用して、「Dino Game」デモと対話することができます。
+前のステップで "game runner" と "difficulty mode" の2つの機能フラグを作成したので、これらのフラグを使って "Dino Game" デモと対話することができます。
 
-デモとのインタラクションを試すには、「クイックスタート」パネルを開き、「3. デモとのインタラクションを試す」ステップをクリックします。その後、「Dino Game」デモのページに移動します。
+デモと対話するためには、"Quick start" パネルを開き、ステップ "3. Try interacting with the demo" をクリックします。すると "Dino Game" デモページに移動します。
 
+![「difficulty mode」フラグ作成ダイアログの画像](../getting-started/assets/try-interacting-with-demo/001.png)
 
-![「難易度モード」フラグの作成ダイアログ。](../getting-started/assets/try-interacting-with-demo/001.png)
-
-このデモでは、フィーチャーフラグをONにすることで、「Dino Game」がゲームエリアに表示される方法を学びます。逆に、フィーチャーフラグをOFFにすると、ゲームがすぐに消えます。
+このデモでは、機能フラグをONにしてゲームエリアに "Dino Game" が表示されるようにする方法を学びます。逆に、機能フラグをOFFにすると、ゲームはすぐに消えます。
 
 ![](../getting-started/assets/try-interacting-with-demo/002.png)
 
-また、フィーチャーフラグのバリエーションを使用して、ゲームの難易度モードを制御する方法も学びます。
+また、機能フラグのバリエーションを使用してゲームの難易度モードを制御する方法も学びます。
 
 ![](../getting-started/assets/try-interacting-with-demo/003.png)
 
-デモを試した後は、次のステップ「[SDKを接続する](connect-an-sdk)」に進むことができます。
+デモで遊んだ後、次のステップ "[Connect an SDK](connect-an-sdk)" に進むことができます。

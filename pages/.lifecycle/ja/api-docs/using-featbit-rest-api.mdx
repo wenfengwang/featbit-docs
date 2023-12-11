@@ -1,99 +1,100 @@
+```markdown
 import { Callout } from 'nextra/components'
 
-# FeatBit REST API の使用方法
+# FeatBit REST API の使用
 
 ### 概要 <a href="#overview" id="overview"></a>
 
-このガイドでは、FeatBit REST API の使用方法について説明します。API アクセストークンの作成方法、リクエストの送信方法、およびレスポンスの評価方法について説明します。一般的な使用例を紹介し、FeatBit API のドキュメンテーションに慣れる手助けをします。
+このガイドでは、FeatBit REST API の使用方法について説明します。API アクセストークンの作成方法、リクエストの作成方法、および応答の評価方法について説明します。一般的な使用例を紹介し、FeatBit API のドキュメントに慣れるのを支援します。
 
-FeatBit REST API は、FeatBit ユーザーインターフェース（UI）と対話するためのプログラム的な代替手段です。この API を使用して、フラグリストで利用可能な任意の操作を実行できます。フィーチャーフラグのトグル、セグメントの更新、カスタムインテグレーションの構築など、さまざまな用途において REST API がよく使用されます。
+FeatBit REST API は、FeatBit ユーザーインターフェイス（UI）とのプログラミングによる相互作用の代替手段です。FeatBit API を使用して、フラグリストで利用可能なアクションを実行することができます。たとえば、REST API は、フィーチャーフラグの切り替え、セグメントの更新、およびカスタム統合の構築によく使用されます。
 
-> フィーチャーフラグの評価には FeatBit SDK を使用してください
+> FeatBit SDK を使用してフラグを評価する
 >
-> アプリケーションのコードでフィーチャーフラグを評価する場合は、REST API を使用することをお勧めしません。代わりに、FeatBit SDK を使用してください。SDK には、フラグ値のキャッシュや更新のストリーミングなどの機能があります。これらの機能は、REST API を使用してフラグ値を評価する場合には自動的に提供されません。詳細については、[SDK の接続](../getting-started/connect-an-sdk/)を参照してください。
+> アプリケーションのコードでフィーチャーフラグを評価する場合、REST API を使用することは _推奨されていません_。代わりに、FeatBit SDK を使用してください。SDK には、フラグ値のキャッシングや更新のストリーミングなどの機能が含まれており、REST API を使用してフラグの値を評価する際に自動的に受け取れないものがあります。詳細については、[SDK を接続する](../getting-started/connect-an-sdk/)を参照してください。
 
-このガイドでは、次のようなことができます:
+このガイドでは、以下のことができます：
 
-* FeatBit API へのアクセスに必要なリクエストヘッダーの設定、アクセストークンの作成
-* REST API を使用して FeatBit リソースの詳細を読み取る方法
-* REST API を使用して FeatBit リソースを作成および更新する方法
-* REST API との連携における一般的な使用例の学習
+* アクセストークンの作成を含む、FeatBit API へのリクエストヘッダーの設定
+* REST API を使用したFeatBit リソースの詳細の読み取り
+* REST API を使用したFeatBit リソースの作成と更新
+* REST API を使用した一般的な使用案件の学習
 
-### 必要条件 <a href="#prerequisites" id="prerequisites"></a>
+### 前提条件 <a href="#prerequisites" id="prerequisites"></a>
 
-このガイドを完了するには、次の必要条件を満たす必要があります:
+このガイドを完了するには、以下の前提条件を満たしている必要があります：
 
-* ローカルまたはサーバー上で動作する FeatBit があること。[インストール](../installation/full-installation.md)を参照してください。
-* REST API に対してリクエストを送信するためのツールへのアクセス。以下にそのいくつかの選択肢を示します:
+* ローカルまたはサーバー上で FeatBit が実行されていること。[インストール](../installation/full-installation.md)を読んでください。
+* REST API へのリクエストを行うためのツールにアクセスできること。以下にその多くのオプションが記載されています：
   * [Curl](https://curl.se/)
   * [Postman](https://www.postman.com/)
-  * [FeatBit API ドキュメンテーション](overview.md)
+  * [FeatBit API documentation](overview.md)
 
 #### Curl <a href="#curl" id="curl"></a>
 
-[Curl](https://curl.se/) は、REST API に対してリクエストを送信するために使用できる一般的なコマンドラインツールです。このガイドでは、例として curl を使用します。このガイドの例を自分のコマンドラインから実行することができます。
+[Curl](https://curl.se/) は、REST API にリクエストを行うために使用できる一般的なコマンドラインツールです。このガイドでは、curl を使用しています。このガイドの例を自分のコマンドラインから実行できます。
 
 #### Postman <a href="#postman" id="postman"></a>
 
-[Postman](https://www.postman.com/) プラットフォームは、REST API に対してリクエストを作成、実行、保存するための別のオプションです。設定、実行、および保存のためのツールを提供しています。無料の Postman アカウントを作成し、このガイドの例を Postman クライアントから実行できます。
+[Postman](https://www.postman.com/) プラットフォームは、REST API にリクエストを行うための別のオプションです。リクエストの設定、実行、および保存のためのツールが提供されます。無料の Postman アカウントを作成して、このガイドの例を Postman クライアントから実行できます。
 
-#### FeatBit API ドキュメンテーション <a href="#launchdarkly-api-documentation" id="launchdarkly-api-documentation"></a>
+#### FeatBit API のドキュメント <a href="#launchdarkly-api-documentation" id="launchdarkly-api-documentation"></a>
 
-FeatBit API ドキュメントでは、各ドキュメント化されたリクエストの例が提供されています。
+FeatBit API ドキュメントでは、各ドキュメント化されたリクエストの例が提供されます。
 
-#### FeatBit データの階層構造 <a href="#launchdarkly-data-hierarchy" id="launchdarkly-data-hierarchy"></a>
+#### FeatBit データ階層構造 <a href="#launchdarkly-data-hierarchy" id="launchdarkly-data-hierarchy"></a>
 
-FeatBit アカウントは、1つ以上の **プロジェクト** を含むことができます。プロジェクト内には複数の **環境** が含まれ、**フィーチャーフラグ** はプロジェクトの環境内に存在します。新しいフラグを作成する場合、そのフラグはその環境内でのみ作成されます。すべてのフラグの設定は、各環境に固有です。1つの環境で行った変更は、他の環境には適用されません。必要に応じて、すべての環境に対して一意の方法で同じフラグを設定することができます。
+FeatBit アカウントには 1 つ以上の **プロジェクト** を含めることができます。プロジェクトには複数の **環境** を含めることができ、**フィーチャーフラグ** はプロジェクトの環境内に存在します。新しいフラグを作成すると、その環境内でのみ作成されます。すべてのフラグ構成設定は、各環境に固有です。1 つの環境で行う変更は、他の環境には適用されません。必要に応じて、すべての環境で同じフラグを一意の方法で構成できます。
 
-多くのソフトウェアプロジェクトでは、各プロジェクト内にテスト、ステージング、本番環境があります。FeatBit では、「モバイルアプリ」プロジェクトには `android test`、`android prod`、`ios test`、`ios prod` などの環境が存在する場合があります。
+多くのソフトウェアプロジェクトには、各プロジェクト内にテスト、ステージング、および本番環境があります。FeatBit では、組織のニーズに合った任意の環境構造を定義できます。たとえば、モバイルチームでは、「モバイルアプリ」のプロジェクト内に `android test`、`android prod`、`ios test`、および `ios prod` の環境が必要になるかもしれません。
 
 ### ヘッダーの設定 <a href="#setting-up-your-headers" id="setting-up-your-headers"></a>
 
-各リクエストには必須のヘッダー情報があります。ヘッダーはキー/値のペアで構成されます。curl や Postman を含む多くのリクエスト作成ツールは、これらのヘッダーをリクエスト間で保存します。
+作成するリクエストごとに必要なヘッダー情報があります。ヘッダーはキー/値のペアで構成されています。curl や Postman をはじめとするリクエストを行うための多くのツールは、これらのヘッダーをリクエストごとに自動的に保存します。
 
 <Callout type="info">
-Postman を使用している場合は、**Host** と **Content-Length** のヘッダーが選択されていることを確認してください。**curl** またはその他のツールを使用している場合は、これらの 2 つのヘッダーが自動的に追加されます。
+Postman を使用している場合、**Host** と **Content-Length** ヘッダーが選択されていることを確認してください。これらの 2 つのヘッダーは、**curl** やその他のツールを使用している場合に自動的に追加されます。
 </Callout>
 
-#### 必須ヘッダー <a href="#required-headers" id="required-headers"></a>
+#### 必須のヘッダー <a href="#required-headers" id="required-headers"></a>
 
-すべてのリクエストには、`Authorization` ヘッダーが必要です。このヘッダーは、要求されたアクションを実行するための権限があるかどうかを認証し、権限が不十分な場合はエラーを返します。たとえば、プロジェクトについての情報を要求するが、そのプロジェクトに読み取り権限がない場合、エラーレスポンスが返されます。
+すべてのリクエストには、`Authorization` ヘッダーが必要です。このヘッダーは、あなた自身を認証し、指定されたリソースに対して要求されたアクションを実行する権限があるかどうかを確認します。たとえば、プロジェクトに関する情報を要求しているが、そのプロジェクトに読み取りアクセス権限がない場合、応答は、十分な権限がないことを示すエラーになります。
 
-`Authorization` ヘッダーの値は、API アクセストークンです。アクセストークンは個人用またはサービストークンのどちらでも使用できます。FeatBit では、**Integrations/Access tokens** ページからアクセストークンを作成できます。このガイドでは、フィーチャーフラグ **ManageFeatureFlag** の権限を持つトークンが必要なので、トークンを作成する際に **ManageFeatureFlag** 権限を選択してください（デフォルトで選択されています）。
+`Authorization` ヘッダーの値は、API アクセストークンです。アクセストークンには個人用のものとサービストークンの両方があります。FeatBit で、**Integrations/Access tokens** ページからアクセストークンを作成することができます。このガイドでは、`ManageFeatureFlag` 権限を持つトークンが必要です。トークンを作成する際には、**ManageFeatureFlag** 権限（デフォルトで選択されています）を選択してください。
 
-詳細については、[Creating API access tokens](../integrations/api-access-tokens.md) を参照してください。
+詳細については、[API アクセストークンの作成](../integrations/api-access-tokens.md)を参照してください。
 
 SDK キーはアクセストークンとして使用できません
 
-リクエストにリクエストボディが含まれる場合、API では `Content-Type` ヘッダーが `application/json` の値で必要です。リクエストにボディが含まれていない場合、API は `Content-Type` ヘッダーを無視します。つまり、API がそれを要求していない場合でも、常に `Content-Type` ヘッダーを含めても安全です。
+リクエスト本文を含むすべてのリクエストには、`Content-Type: application/json` という値を持つ `Content-Type` ヘッダーが必要です。リクエストに本文が含まれていない場合、API は `Content-Type` ヘッダーを無視します。つまり、API が要求していない場合でも、常に `Content-Type` ヘッダーを含めても安全です。
 
-curl でリクエストに必要なヘッダーを含めるには、`-H` オプションを使用します:
+curl を使用してリクエストのために必要なヘッダーを含めるには、`-H` オプションを使用してください：
 
-curl の例
+Curl の例
 
 ```bash
 curl -X GET 'http://localhost:5000/api/v1/envs/9d782f01-6ffb-4a7c-83a2-79304d801a46/feature-flags' \  -H 'Authorization: EXAMPLE-API-ACCESS-TOKEN' \  -H 'Content-Type: application/json'COPY
 ```
 
-この例では、`-X` オプションでリクエストのタイプ `GET` を指定します。URL にはリクエストがアクションを実行するリソースが指定されています。各 `-H` オプションは、リクエストに含まれるヘッダーを指定します。リクエストを実行するたびに、`-X`、リクエストのタイプ、URL、ヘッダーを含める必要があります。
+この例では、`-X` オプションがリクエストのタイプ、`PATCH` を指定しています。URL は、リクエストが作用するリソースを指定しています。各 `-H` オプションは、リクエストに含められるヘッダーを指定しています。リクエストを行うたびに、`-X`、リクエストタイプ、URL、およびヘッダーを含める必要があります。
 
-### 練習: フラグリストの読み取り <a href="#exercise-reading-flag-and-environment-information" id="exercise-reading-flag-and-environment-information"></a>
+### フラグ リストの読み取りの練習 <a href="#exercise-reading-flag-and-environment-information" id="exercise-reading-flag-and-environment-information"></a>
 
-#### 環境 ID の取得 <a href="#reading-a-flag" id="reading-a-flag"></a>
+#### 環境 ID を取得する <a href="#reading-a-flag" id="reading-a-flag"></a>
 
-前述のように、フィーチャーフラグは環境ごとに異なります。環境のフィーチャーフラグを一覧表示するには、環境の ID が必要です（フィーチャーでは、環境キーを使用して API を呼び出すことができる場合があります）。
+前述のように、フィーチャーフラグは環境に固有です。環境のフラグリストを表示するには、環境 ID が必要です（実際には、環境キーを指定して API を呼び出すことが可能になります）。
 
-環境 ID を取得するには、次の手順を実行してください:
+環境 ID を取得するには：
 
 1. **Organization** ページに移動し、**Projects** タブをクリックします。
-2. プロジェクト一覧から、接続したいプロジェクトと環境を見つけます。
-3. **Copy Id** ボタンをクリックすると、環境 ID がクリップボードにコピーされます
+2. プロジェクトリストから、接続したいプロジェクトと環境を見つけます。
+3. **Copy Id** ボタンをクリックし、環境 ID がクリップボードにコピーされます
 
 ![](../api-docs/assets/using-featbit-rest-api/001.png)
 
 #### API の呼び出し
 
-前の手順で取得した環境 ID を使用して、次の呼び出しを行います
+前の手順で取得した環境 ID を使用して、以下のコールを作成します
 
 ```bash
 curl -X GET 'http://localhost:5000/api/v1/envs/[YOUR ENVIRONMENT ID]/feature-flags?pageIndex=0&pageSize=10&isEnabled=' \
@@ -101,7 +102,7 @@ curl -X GET 'http://localhost:5000/api/v1/envs/[YOUR ENVIRONMENT ID]/feature-fla
   -H 'Content-Type: application/json'
 ```
 
-このリクエストのレスポンスは、`200` の成功コードと、その環境のフィーチャーフラグを含む JSON オブジェクトです。例えば:
+このリクエストへの応答は、`200` 成功コードと、その環境のフィーチャーフラグに関するすべてを含む JSON オブジェクトです。例：
 
 ```json
 {
@@ -140,4 +141,4 @@ curl -X GET 'http://localhost:5000/api/v1/envs/[YOUR ENVIRONMENT ID]/feature-fla
     }
 }
 ```
-
+```
