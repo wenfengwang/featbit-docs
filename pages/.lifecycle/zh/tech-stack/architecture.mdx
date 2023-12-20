@@ -1,0 +1,78 @@
+
+从 'nextra/components' 导入 { Callout }
+
+# 架构
+
+<Callout type="info" >
+  This document is intended for the standard version, please refer to [Architechture - Professional](architecture-professional.md)[ ](architecture-professional.md)for the professional version instead. For the differences between standard and professional versions, please check [Standard VS. Professional](standard-vs.-professional.md).
+</Callout>
+
+
+## **概览**
+
+FeatBit 是一个**可扩展**且**快速**的特性管理平台。FeatBit 的使命是授权所有团队交付、控制、试验以及从其软件中获利。
+
+整体架构如下：
+
+![](../tech-stack/assets/architecture/001.webp)
+
+* **UI :** 为用户提供一个可视化UI界面，用于管理和发布功能标志、细分和实验等。
+* **API服务器：**为UI和外部集成服务提供数据管理能力，例如标志触发器、代码引用等。
+* **评估服务器：**提供一个可扩展、高性能的标志规则评估引擎和数据分发服务器。
+* **数据分析服务器：**提供一个数据分析引擎。它确保以下服务：
+  * 以近乎实时的方式计算实验并返回其结果。
+  * 为UI中所有分析提供洞察服务，例如特性标志报告。
+* **SDK:** 我们为所有主要语言和框架提供SDK，以便您能够从您的服务和应用程序中快速接入FeatBit。
+* **Redis：** 它扮演两个角色
+  * 作为缓存层以提升性能。
+  * 作为消息队列以确保不同服务之间高吞吐量的异步数据通信。
+* **MongoDB**：作为主数据库。所有的特性标志、细分、实验、最终用户和分析数据都存储在MongoDB中。
+
+## 可扩展性和高性能
+
+在设计架构时，我们最重要的考虑是如何使其可扩展以及如何获得最佳性能。为此，我们精心选择了技术栈并将所有服务容器化，这使得它非常容易地作为集群部署并**横向扩展**。
+
+为了在服务之间的数据存储和流动上获得最佳性能，我们引入了MongoDB作为主要数据存储，Redis作为系统缓存和消息队列。我们使用**多路复用**和**发布/订阅系统**在服务之间发送/接收消息，平均响应时间以毫秒计。
+
+功能标志变更或其他配置推送到SDK几乎是实时的。当UI中的标志发生变更时，推送数据到SDK的时间少于**100**毫秒。我们采用WebSocket解决方案而非长轮询，因为它可以在变更发生时主动推送到SDK。当然，这是有代价的，当出现大量并发请求时，它可能占用大量内存。为了避免成为内存怪兽，我们谨慎选择了序列化和反序列化数据的方法，以确保在这一过程中不会消耗额外的内存。
+
+## 数据流动
+
+当系统运行时，数据在不同服务之间流动。主要有四种数据流：
+
+### 数据同步（特性标志/细分）数据流
+
+特性标志/细分数据存储在MongoDB中，它是最重要的数据存储，为FeatBit的所有主要功能服务。
+
+客户端或服务器SDK与评估服务器建立连接后，SDK会发送一个带有最新更改时间戳的数据同步请求给评估服务器，评估服务器会检查该时间戳，并从Redis中获取符合条件的特性标志和细分，经过最终评估过程（仅针对客户端SDK），结果会被发送回SDK。响应有两种类型：
+
+* **full**：响应包含所有特性标志和细分
+* **patch**：响应仅包含自时间戳以来创建或更新的新特性标志和细分
+
+![](../tech-stack/assets/architecture/002.png)
+
+### 特性标志/细分变更数据流
+
+当用户从UI修改一个特性标志或细分时，除了在MongoDB中存储数据外，API服务器还会将变更推送到Kafka，评估服务器读取这些变更，更新Redis，评估与变更相关的特性标志，并通过WebSocket连接将相关的特性标志或评估结果发送给客户端/服务器端SDK。
+
+![](../tech-stack/assets/architecture/003.png)
+
+### 最终用户数据流
+
+最终用户数据存储在MongoDB中，用于特性标志和细分的目标定位。
+
+当客户端SDK建立WebSocket连接或切换到另一个用户（通过调用identify API），或客户端/服务器SDK发送跟踪消息时，评估服务器会将最终用户信息发送到Kafka，然后API服务器读取该数据并更新/插入MongoDB。
+
+![](../tech-stack/assets/architecture/004.png)
+
+### 特性标志和度量追踪数据流
+
+特性标志和度量追踪数据存储在ClickHouse中，用于A/B/n测试（实验）和报告。
+
+当客户端/服务器SDK将特性标志和度量追踪消息发送到评估服务器时，后者会将追踪消息转发到Kafka，数据分析服务器从Kafka读取追踪消息并将其存储在ClickHouse中。
+
+![](../tech-stack/assets/architecture/005.png)
+
+## **您是所有数据的唯一拥有者**
+
+整体架构还确保了隐私方面的考虑，因为所有数据和通信都保留在系统内部。它不会发送任何数据到任何第三方服务。您是所有数据的唯一拥有者，这也允许我们自信地宣称我们完全符合[GDPR](https://gdpr-info.eu/)规定。

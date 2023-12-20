@@ -1,0 +1,82 @@
+
+从 'nextra/components' 导入 { Callout } 组件
+
+# 目标化的渐进式交付
+
+> **目标化**的渐进式交付
+> 这些做法让团队能够快速前进，同时避免破坏现有成果。FeatBit 提供了精准的用户定位和功能标记规则，这为多种目标化部署提供了可能性：环形部署、百分比部署、金丝雀发布等。这些目标化、逐步的发布策略，或发布进程， involve far less risk than big-bang waterfall releases. Employ Targeted Progressive Delivery techniques to code faster, reduce risk, and continuously improve the customer experience.
+
+## 先决条件
+
+我们假设你已经完成了“入门”系列教程中的最后三篇：
+
+* 你已经成功创建了两个功能标志，`game runner` 和 `difficulty mode` 在教程[为演示创建两个功能标志](../create-two-feature-flags.md)中。
+* 你已经有了与[“恐龙游戏”演示](../try-interacting-with-the-demo.md)互动的基本经验。
+* 你知道如何将[连接 SDK](../connect-an-sdk/)到你的程序或“恐龙游戏”演示中：
+  * 下载演示代码样本
+  * 初始化 SDK
+  * 用自定义属性来识别用户
+  * 实现功能标志进行功能交付和控制
+
+## 逐步发布游戏
+
+在生产环境中测试了“恐龙游戏”之后，你可能仍然担心游戏是否能够正确运行。为了避免所有用户同时遇到问题，你选择了逐步发布你的功能。默认情况下，你计划按以下步骤发布功能：
+
+1. 一开始5%
+2. 如果前5%的用户没有发现错误，则增加到20%
+3. 如果前20%的用户没有明显错误，则增加到50%
+4. 如果前50%的用户没有明显错误，则增加到100%
+
+为了实现这一点，你只需要修改默认规则以设置“发布百分比”，然后分配比如10%为真，90%为假。
+
+![](../../getting-started/assets/targeted-progressive-delivery/001.webp)
+
+这意味着10%的用户将获得返回值为真的变体，恐龙游戏将对那些获得真变体的用户发布。
+
+![](../../getting-started/assets/targeted-progressive-delivery/002.webp)
+
+如果在发布过程中遇到了更糟糕的反馈（比如出现了错误），你可以通过重新分配发布百分比来立即回滚你的功能发布。
+
+<Callout type="info">
+  The rollout percentage algorithm is a normal random distribution algorithm and is computed based on end user id.
+
+
+![](../../getting-started/assets/targeted-progressive-delivery/003.webp)
+</Callout>
+
+## 针对特定组织逐步发布
+
+有时候，你可能只希望针对特定组织而不是所有用户逐步发布功能。你可以在“规则”部分创建一个规则来实现这一点。
+
+### 为规则创建用户属性
+
+首先，你需要在 Portal 中为规则创建属性。转到“终端用户”页面，点击“属性”按钮。
+
+![](../../getting-started/assets/targeted-progressive-delivery/004.webp)
+
+添加一个名为“orgId”的新属性，并点击“保存”以创建它。
+
+![](../../getting-started/assets/targeted-progressive-delivery/005.webp)
+
+你可以为你创建的属性添加预定义的值。
+
+![](../../getting-started/assets/targeted-progressive-delivery/006.webp)
+
+### 将属性和值传递给系统（仅限开发者）
+
+确保在初始化 SDK 时，属性“orgId”及其值已经传递给 FeatBit 系统。确保你在预设值中设置的键（如上图所示）与你在 SDK 初始化代码中传递的键相同。
+
+![](../../getting-started/assets/targeted-progressive-delivery/007.webp)
+
+FeatBit 系统将比较你通过 SDK 传递的属性及其值和你在 Portal 中配置的属性及其值。
+
+### 针对AA公司逐步发布
+
+返回到“游戏运行器”功能标志的“目标设置”页面。使用你刚创建的属性“orgId”来创建一个规则。你需要：
+
+1. 添加一个带有名称的新规则（例如，针对AA公司逐步发布）。
+2. 添加一个条件，如果用户的“orgId”在列表中，那么这个用户就有10%的机会获得真值变体。
+
+![](../../getting-started/assets/targeted-progressive-delivery/008.webp)
+
+按照我们上面设置的规则，恐龙游戏将对AA公司的10%用户进行发布。如果在发布过程中遇到了更糟糕的反馈（比如出现了错误），你可以通过重新分配发布百分比来立即回滚你的功能发布。

@@ -1,0 +1,59 @@
+
+从 'nextra/components' 导入 { Callout } 组件
+
+# 使用 Docker Compose 进行安装
+
+## 安装前提条件
+
+* Docker 引擎版本需为 **1.13.1+**
+* Docker Compose **版本需为 1.27.0 及以上**
+
+## 安装步骤
+
+FeatBit 提供两种方案：**标准版**和**专业版**。合适的方案取决于您的业务规模和特定需求。通常，**标准版**适用于小型企业，而**专业版**则更适合中型至大型企业。您可以在[这里](../tech-stack/standard-vs.-professional.md)了解它们之间的差异。所有方案都保证了系统的弹性、速度、访问我们的 Slack 社区以及我们团队的支持。
+
+*   将代码库克隆到您的服务器或本地机器上，然后启动服务。
+
+    ```bash
+    git clone https://github.com/featbit/featbit
+    cd featbit
+    
+    # for Standard version, run
+    docker compose up -d
+    
+    # for professional version, run
+    docker compose -f docker-compose-pro.yml up -d
+    ```
+* 容器全部启动后，打开 FeatBit的门户网站 [http://localhost:8081](http://localhost:8081/) 并使用默认的登录凭证进行登录。
+  * 用户名： **test@featbit.com**
+  * 密码：**123456**
+
+如果您想要从源代码构建镜像并启动容器，也可以按照以下步骤操作：
+
+```sh
+# for Standard version, run
+docker compose up -f docker-compose-dev.yml -d
+
+# for professional version, run
+docker compose -f docker-compose-pro-dev.yml up -d
+```
+
+<Callout type="info">
+The Pro version's docker compose file contains a "run once" service called **init-kafka-topics** that creates the kafka topics required by the system. This service is meant to run only once and then exit, so it’s ok for this service to be in Exited status.
+</Callout>
+
+
+## 升级更新
+
+执行以下命令以升级到最新的 FeatBit 镜像：
+
+```bash
+docker-compose pull
+docker-compose rm -fsv featbit
+docker-compose up -d
+```
+
+## 常见问题解答
+
+* [如何解决 Docker 容器端口冲突问题?](faq.md#how-to-solve-docker-container-port-conflict-problem)
+* [如何将 FeatBit 门户设置为公开访问？](faq.md#how-to-make-featbit-portal-accessible-publicly)

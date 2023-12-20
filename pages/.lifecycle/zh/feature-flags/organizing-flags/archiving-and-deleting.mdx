@@ -1,0 +1,73 @@
+
+从 'nextra/components' 导入 { Callout }
+
+# 存档与删除
+
+## 概览
+
+本主题讲解如何存档不再需要的功能标记，或者删除已经存档的功能标记。
+
+当某个功能标记不再对用户生效时，可能就是将其存档的时候了。存档功能标记意味着它会从FeatBit中退役，但并不会被删除。如果需要，您可以恢复已存档的功能标记，或者在之后参考其配置。
+
+在确定您的项目中不再需要某个已存档的功能标记后，您可以将其删除。
+
+## 存档功能标记
+
+当功能标记在您选择的环境中**只提供一种变体**，并且在过去七天内**没有被请求**时，它就是存档的理想候选。
+
+在FeatBit中存档功能标记时，您也应该从代码中移除相关的标记。
+
+<Callout type="warning">
+If you do not remove an archived flag from your code, then all end users encountering the feature will receive the fallback value.
+</Callout>
+
+
+<Callout type="error">
+Be absolutely certain you can archive a flag without any unintended impact.
+</Callout>
+
+
+要存档一个功能标记：
+
+1. 导航至功能标记列表。
+2. 找到您想要存档的功能标记。
+3. 点击功能标记名称或“详情”链接，进入功能标记详情页面。
+4.  点击**存档**。将出现一个确认对话框。
+
+![](../../feature-flags/assets/organizing-flags/archiving-and-deleting/001.png)
+
+5. 点击**确定**。
+
+功能标记将被存档并从列表中移除。您可以在已存档功能标记列表中找到它。要了解更多信息，请阅读查看和恢复已存档功能标记。
+
+## 查看已存档功能标记
+
+已存档的功能标记在列表中是不可见的。勾选“已存档”复选框以查看它们。
+
+![](../../feature-flags/assets/organizing-flags/archiving-and-deleting/002.png)
+
+## 恢复和删除已存档功能标记
+
+存档功能标记后，您可以选择恢复或删除它。
+
+恢复已存档的功能标记后，它将像其他功能标记一样重新开始评估。因此，在恢复之前，确认功能标记不会带来任何意外的影响是很重要的。
+
+<Callout type="warning">
+When you delete an archived flag, the flag value defined in code will be returned for all users. Remove any references to the feature flag from your application code before you delete it.
+</Callout>
+
+
+<Callout type="error">
+If you delete a flag, you cannot restore it. Be absolutely certain you do not need a flag any more before you delete it.
+</Callout>
+
+
+要恢复或删除功能标记：
+
+1. 导航至功能标记列表。
+2. 勾选“已存档”复选框以查看已存档的功能标记。
+3. 找到您希望恢复或删除的功能标记。
+4. 点击功能标记名称或“详情”链接，进入功能标记详情页面。
+5.  如果您希望恢复这个功能标记，请点击**恢复**；如果您希望删除这个功能标记，请点击**永久删除**。
+
+![](../../feature-flags/assets/organizing-flags/archiving-and-deleting/003.png)

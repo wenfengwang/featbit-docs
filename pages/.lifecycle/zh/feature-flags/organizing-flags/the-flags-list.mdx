@@ -1,0 +1,57 @@
+
+从 'nextra/components' 导入 { Callout } 组件
+
+# 标记清单
+
+## 概览
+
+本主题旨在说明如何利用功能标记清单，展示您的功能标记，并提供创建、修改及管理这些标记的选项。
+
+## 查看功能标记
+
+在某一环境下，您所有的功能标记都会显示在标记清单上。新增一个标记会将其加入清单，而归档一个标记则会将其从清单中移除。您可以利用搜索栏，通过名称、键值、标签或状态来查找**特定标记**。
+
+默认情况下，最新更新的标记会优先显示，而归档的标记则**不会**在清单中展示。若要查看已归档的标记清单，您需要勾选'已归档'的复选框。
+
+以下是功能标记清单的图片：
+
+![](../../feature-flags/assets/organizing-flags/the-flags-list/001.webp)
+
+## 创建功能标记
+
+创建功能标记的步骤如下：
+
+1. 前往标记清单页面。
+2. 点击**新增**按钮。"新建功能标记"对话框会出现。
+3. 输入一个独一无二的、便于人类阅读的名称。
+4. 点击**保存**按钮。
+
+![](../../feature-flags/assets/organizing-flags/the-flags-list/002.webp)
+
+<Callout type="info">
+**NOTE:** A suggested key auto-populates when you enter the name, you'll use this key to reference the flag in your code. After you save the flag key, you **cannot modify** it. You can change a flag's name, however, whenever you want.
+</Callout>
+
+
+新建的功能标记就会显示在清单中。
+
+## 复制功能标记
+
+若要将标记从一个环境复制到另一个环境，请按照以下步骤操作：
+
+1. 前往标记清单页面。
+2. 选择您想要复制的标记。
+3.  将鼠标悬停在溢出菜单按钮上，并选择**复制到环境**。
+
+![](../../feature-flags/assets/organizing-flags/the-flags-list/003.webp)
+
+4.  再次确认所选标记，并选择目标环境以复制标记。
+
+![](../../feature-flags/assets/organizing-flags/the-flags-list/004.webp)
+
+5. 点击 **确定** 按钮。
+
+<Callout type="warning">
+**Note: The Targeting user and rules will not be copied.** Because one of your rules may references a segment that does not exist in the target environment and the targeting user also may not exist in the target environment.
+</Callout>
+

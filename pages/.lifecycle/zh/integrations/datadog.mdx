@@ -1,0 +1,143 @@
+
+从 'nextra/components' 导入 { Callout }
+
+# DataDog
+
+FeatBit 提供以下方法与 DataDog 集成：
+
+1. 使用 [Datadog RUM 集成](https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=browser#analyze-your-feature-flag-performance-in-rum) 发送功能标志评估数据至 DataDog。
+2. [使用 Datadog 事件集成](https://docs.datadoghq.com/api/?lang=bash#events)接收来自 FeatBit 的活动，例如功能标志更新。
+3. 使用标志触发器，当 DataDog 指标降至某阈值以下时回滚功能标志。
+4. 将功能标志洞察导出至 DataDog APM。
+
+## 使用 Datadog RUM 集成
+
+[Feature Flag Tracking](https://docs.datadoghq.com/real_user_monitoring/feature_flag_tracking/)让您更清楚地了解您的用户体验和性能监控，通过允许您确定哪些用户正在显示特定功能，以及您引入的任何变化是否影响了用户体验或对性能产生了负面影响。
+
+### 设置功能标志数据收集
+
+首先，您需要设置 [DataDog 的功能标志数据收集](https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection)。对于 **JavaScript/TypeScript** 项目，您需要初始化 RUM SDK 并配置 `enableExperimentalFeatures` 初始化参数为 `["feature_flags"]`。这将启用功能标志跟踪功能，并将功能标志评估数据发送至 DataDog。
+
+```javascript
+datadogRum.init({
+  applicationId: "sample-application-id",
+  clientToken: "sample-client-token",
+  site: "datadoghq.com",
+  service: "demo-app",
+  env: "dev",
+  version: "1.0.0",
+  sessionSampleRate: 100,
+  sessionReplaySampleRate: 100,
+  trackUserInteractions: true,
+  trackResources: true,
+  trackLongTasks: true,
+  defaultPrivacyLevel: "mask-user-input",
+  // This enables the beta feature flag tracking
+  enableExperimentalFeatures: ["feature_flags"]
+});
+
+datadogRum.startSessionReplayRecording();
+```
+
+接着，您可以在评估 FeatBit 功能标志时，使用 datadogRum 包内置的 addFeatureFlagEvaluation 方法。
+
+```javascript
+import { datadogRum } from "@datadog/browser-rum";
+import fbClient from "featbit-js-client-sdk";
+
+const flagEvalResult = fbClient.variation("feature-flag-key", flagsDefaultValues[prop] || '')
+datadogRum.addFeatureFlagEvaluation("feature-flag-key", flagEvalResult);
+```
+
+如果您不想在每个地方都写两行代码，可以将 `.variation(...)` 和 `.addFeatureFlagEvaluation(...)` 封装进一个函数中。在我们的 [React 示例](https://github.com/featbit/featbit-samples/blob/main/samples/dino-game/interactive-demo-react/src/featBit/featBitSlice.js) 和 [Vue 示例](https://github.com/featbit/featbit-samples/blob/main/samples/dino-game/interactive-demo-vue/src/featbit.js) 项目中，我们创建了 `Flags Proxy` 来提供获取功能标志值的统一接口。所以您可以将 addFeatureFlagEvaluation 加入到 Flags Proxy 中，并像下面这样使用：
+
+```javascript
+import { datadogRum } from "@datadog/browser-rum";
+import fbClient from "featbit-js-client-sdk";
+
+export const createFlagsProxy = () => {
+    return new Proxy({}, {
+        get(target, prop, _) {
+          let returnValue = ''
+          if(typeof prop === 'string' && !prop.startsWith('__v_')){
+            returnValue = fbClient.variation(prop, flagsDefaultValues[prop] || '');
+            datadogRum.addFeatureFlagEvaluation(prop, returnValue);
+          }
+          return returnValue;
+        }
+    })
+}
+```
+
+这样，当您在代码中调用 feature flag 时，它会自动将功能标志评估数据发送到 DataDog，如下面的代码所示：
+
+```javascript
+// Vue example with Pinia, code below also guarantees the real-time update of the feature flag value
+<DinoGameCore v-if="featBitStore.flags['game-runner']== true"
+              :difficulty="featBitStore.flags['difficulty-mode']" />
+
+// React example with Redux, code below also guarantees the real-time update of the feature flag value
+featureFlags["game-runner"] == true ? 
+  <DinoGameCore difficulty={featureFlags["difficulty-mode"]} /> : <>
+
+```
+
+<Callout type="info">
+**NOTE**: The tutorial above showed how to collect feature flag evaluation data in the browser. For other platforms such as iOS and Android, please refer to the [DataDog documentation](https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=ios#custom-feature-flag-management).
+</Callout>
+
+
+### 在 RUM 和 APM 中分析您的功能标志性能
+
+将 FeatBit 与 DataDog 集成后，您可以[在 RUM 中分析功能标志的性能](https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=browser#analyze-your-feature-flag-performance-in-rum)。您可以使用 DataDog 的 RUM 仪表板过滤**会话**、**视图**和**错误**。例如，您可以找到在指定时间范围内，发生在评估了您的 FeatBit 功能标志的视图中的所有错误，如下图所示：
+
+![](../integrations/assets/datadog/filter-errors-with-feature-flag-in-rum.webp)
+
+要查看和分析您的功能标志，请参考 [DataDog功能标志跟踪教程](https://docs.datadoghq.com/real_user_monitoring/feature_flag_tracking/#view-your-feature-flags)。
+
+如果您使用 [DataDog APM](https://www.datadoghq.com/product/apm/)，DataDog 提供了一种方法将前端功能标志数据与您的追踪连接起来。参见[连接 Rum 和 Traces](https://docs.datadoghq.com/real_user_monitoring/connect_rum_and_traces/?tab=browserrum)。这样您可以基于前端和后端的错误设置警报。
+
+## 使用 Datadog 事件集成
+
+Datadog 集成让您可以设置 [Datadog 事件](https://docs.datadoghq.com/api) 以接收 FeatBit 的任何活动。当有变动发生时，如功能标志更新或新账户成员被添加至 FeatBit，FeatBit 会向 Datadog 发送事件。利用这个集成，您可以关联并理解如何改变您在 FeatBit 中的功能会影响您的应用和基础设施指标。
+
+下面的图片展示了功能标志事件与服务 APM 仪表板中失败检测之间的关联。关闭功能标志后，故障消失了。
+
+![](../integrations/assets/datadog/dashboard-apm-error-turn-off-events.png)
+
+完整的事件集成仍在开发中。但您当前可以编写自己的程序来监控我们的 MongoDB `AuditLogs` 集合中的事件变化。这是一个官方教程，说明了如何在 [.NET](https://mongodb.github.io/mongo-csharp-driver/2.7/reference/driver/change_streams/) 中监控集合变化。
+
+![](../integrations/assets/datadog/mongodb-auditlog-collection.png)
+
+然后，您可以使用[DataDog Events API](https://docs.datadoghq.com/api/latest/events/#post-an-event)将活动发送至 DataDog。
+
+<Callout type="info" emoji='💡'>
+Please let us know if you would like us to accelerate feature development for this implementation.
+</Callout>
+
+
+## 与 Datadog 一起使用标志触发器
+
+[DataDog's Webhook](https://docs.datadoghq.com/integrations/webhooks/) 允许您在指标警报触发时通知您的服务。在 Webhook 配置中，您可以选择直接调用[FeatBit Flag Trigger](../feature-flags/feature-workflow/flag-triggers)来切换功能标志的开/关状态，或者调用[FeatBit REST API](../api-docs/using-featbit-rest-api)对特定用户群体进行发布/回滚。以下是配置 Webhook 调用标志触发器的方法：
+
+1. 您需要首先在功能标志中创建一个标志触发器。参见[工作流/标志触发器](/feature-flags/feature-workflow/flag-triggers)。
+
+![](../integrations/assets/datadog/flag-trigger.png)
+
+2. 在 DataDog 集成中，创建一个新的 Webhook 并复制新 Webhook 中的标志触发器 URL。
+
+![](../integrations/assets/datadog/create-webhook.png)
+
+3. 转到监控页面，创建一个带有搜索查询和条件的指标。然后在警报文本中添加 @webhook-name_of_the_webhook。当指标低于条件中设置的阈值时，将触发 Webhook。
+
+![](../integrations/assets/datadog/monitor-notify-team.png)
+
+4. 触发 Webhook 后，功能标志将自动切换开/关。
+
+## 将功能标志洞察导出至 DataDog APM
+
+DataDog 提供了多种工具和功能，用于监控应用程序和系统的性能和行为。您可以使用**指标**快速了解环境的健康状况。例如，可视化用户加载网站的速度或服务器的平均内存消耗。一旦发现问题，您可以使用**日志**和**追踪**进一步排查故障。
+
+除了如上所述将活动事件发送至 APM（[使用 Datadog 事件集成](#using-the-datadog-events-integration)），您还可以通过在高级版中使用 **ClickHouse** 或标准版中使用 **MongoDB**，将 FeatBit 的功能标志洞察数据（前端和后端功能标志使用数据）及自定义事件数据导出至 DataDog APM 和 Metrics，实现深度集成。然后，您可以选择指标来概览标志使用情况（计数、高层影响），以及选择追踪来深入了解标志如何影响每个请求。结合使用指标和追踪，可以全面了解功能标志行为和应用性能。
+
+**如果您对这种实现有任何想法**，我们期待收到您的反馈。

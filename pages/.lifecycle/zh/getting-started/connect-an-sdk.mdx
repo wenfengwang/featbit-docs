@@ -1,0 +1,75 @@
+
+从 'nextra/components' 导入 { Callout }
+
+# 3. 连接SDK
+
+使用SDK是理解如何通过功能标志来交付、控制和实验软件的一项关键技能。
+
+在上一步“尝试与演示互动”中，您学会了如何使用功能标志来控制游戏组件的显示/隐藏，并切换游戏难度模式。现在，让我们来看看这是如何在代码中实现的。
+
+## 遵循门户网站中的指南
+
+最简单的方法是按照门户网站入门页面上的指示操作。在门户网站中，您可以：
+
+**第1步**：选择您在上一步中创建的一个功能标志。然后点击“下一步”按钮，进入第2步。
+
+![](../getting-started/assets/connect-to-sdk/001.png)
+
+**第2步**：选择一种您熟悉的编程语言。复制自动生成的代码，并在您的IDE中运行它。
+
+![](../getting-started/assets/connect-to-sdk/002.png)
+
+门户网站生成的代码包含所有必要元素，例如：
+
+- SDK安装
+- 用服务器URL、环境密钥初始化SDK
+- 使用自定义属性来识别用户
+- 功能标志的实现
+- 功能标志的评估
+- 功能标志更新的监听
+- 等等
+
+![](../getting-started/assets/connect-to-sdk/003.png)
+
+## 手动连接SDK
+
+我们提供多种客户端、服务端和移动端SDK供您选择。您可以选择您擅长的语言，以加快完成快速入门的步骤。
+
+<Callout type="info" emoji="👾">
+  We recommend that you use our SDK, because we have already implemented the best practices for you.
+</Callout>
+
+
+### JavaScript
+
+我们提供客户端[Javascript/Typescript SDK](https://github.com/featbit/featbit-js-client-sdk)。我们还为[React](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-react)和[Vue](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-vue)提供了“Dino Game”示例。该SDK与TypeScript、React、Vue、Angular等完美兼容。
+
+SDK的GitHub仓库包含了详细的使用教程。它也提供了一个示例项目供您尝试。
+
+### .NET
+
+我们提供一个[server-side .NET SDK](https://github.com/featbit/featbit-dotnet-sdk)供您使用。这个SDK可以在您的控制台应用或ASP.NET Core应用中使用。
+
+它也可以用于前端应用程序，如WPF、WinForm、MAUI等。但我们不建议您在移动应用中使用它，因为它比专用的移动SDK更耗电。
+
+SDK的GitHub仓库包含了详细的使用教程。它也提供了一个示例项目供您尝试。
+
+### Java
+
+我们提供一个[Java SDK](https://github.com/featbit/featbit-java-sdk)供您使用。这个SDK可以在您的控制台应用或Spring Boot应用中使用。
+
+SDK的GitHub仓库包含了详细的使用教程。它也提供了一个示例项目供您尝试。
+
+### Python
+
+我们提供一个[Python SDK](https://github.com/featbit/featbit-python-sdk)。SDK的GitHub仓库包含了详细的使用教程。它也提供了一个示例项目供您尝试。
+
+### Go
+
+我们提供一个[Go SDK](https://github.com/featbit/featbit-go-sdk)。SDK的GitHub仓库包含了详细的使用教程。它也提供了一个示例项目供您尝试。
+
+### REST API和WebSocket
+
+对于我们还未提供SDK的其他任何语言或框架，您可以使用我们的REST API来获取功能标志。详细文档请参见[此处](../api-docs/get-users-feature-flags-with-api)。
+
+您可以使用我们的WebSocket接口来实时获取功能标志更新。请加入我们的Slack频道以了解有关此功能的更多信息。
