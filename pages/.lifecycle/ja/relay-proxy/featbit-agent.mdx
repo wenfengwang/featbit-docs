@@ -1,0 +1,44 @@
+import { Callout } from 'nextra/components'
+
+# FeatBit Agent
+
+<Callout type="info">
+これはFeatBit Agentの一般的な紹介です。FeatBit Agentのインストールに関する詳細な手順をお探しの場合は、この[ドキュメント](https://github.com/featbit/featbit-agent#installation)を参照してください。
+</Callout>
+
+
+FeatBit Agent（GitHub リポジトリは[こちら](https://github.com/featbit/featbit-agent)）は、FeatBit ServerとSDKの間に位置する小さなプログラムで、FeatBit Serverのキャッシュされたリードレプリカとリレープロキシの両方を提供します。これにより、FeatBit Serverの負荷を増加させることなく、FeatBitをスケールアップして、数万のSDKに接続を提供できます。
+
+FeatBit Agentは以下の4つの重要な機能を提供します：
+
+* **パフォーマンス**: FeatBit Agentは機能フラグとセグメントをメモリにキャッシュします。最小限のリソースを持つマシン上で動作する単一のFeatBit Agentインスタンスは、数千のWebSocket接続をサポートでき、FeatBit Serverを複製することなく、数万のWebSocket接続をサポートするためにスケールアップできます。&#x20;
+* **低レイテンシー**: FeatBit Agentはエンドユーザーに近い場所で実行することができ、FeatBit Serverから離れた場所にいるユーザーのレイテンシーを大幅に削減できます。
+* **データ保護**: 顧客のインフラストラクチャにFeatBit Agentを展開する場合、ユーザー使用状況データをFeatBit Serverに転送せずにローカルに保持するか、FeatBit Serverに送信する前にデータの匿名化を行うように設定できます。これにより、GDPRおよびその他のデータ保護法規に準拠し、ユーザーデータとプライバシーの保護を促進します。
+* **耐障害性**: FeatBit Agentは、FeatBit Serverへの接続が失われた場合でも、再起動後も正常に動作するように設計されています。
+
+## 概念
+
+FeatBit Agentは2つの異なるモードをサポートしています：
+
+* エージェントモード: FeatBit Serverへの接続をサポートし、動的な機能フラグ、セグメント、環境キーの同期およびその他の高度な機能を提供します。
+* オフラインモード: FeatBit Serverへの接続がなく、データと環境キーの完全な制御が可能です。
+
+### エージェントモード
+
+![](../relay-proxy/assets/featbit-agent/001.webp)
+
+エージェントモードはデフォルトであり、ほとんどの場合にデフォルトで使用されるべきです。これはFeatBit Serverに接続し、機能フラグ、セグメント、環境キーの信頼できる情報源として機能します。
+
+ユーザー使用データは、エージェント上に残すか、FeatBit Serverに送信する前に匿名化するように設定できます。
+
+デフォルトでは、エージェントモードはメモリ内キャッシュを使用して、FeatBit Serverからフェッチした機能を格納します。しかし、より永続的なストレージソリューションを使用することも可能です。この目的のために、FeatBit AgentはRedisまたはバックアップファイルをサポートしており、エージェントの起動時に指定することで設定できます。FeatBit Agentは起動時に永続バックアップオプションが指定されているかどうかをチェックし、指定されている場合はそれを使用して内部キャッシュを充填します。これは、FeatBit Serverが到達不能な場合に有用です。
+
+Redisをストレージソリューションとして使用する場合、複数のエージェントが同じRedisインスタンスを共有することができ、FeatBit Agentをクラスターに水平スケーリングし、データの一貫性を維持することができます。
+
+### オフラインモード
+
+![](../relay-proxy/assets/featbit-agent/002.webp)
+
+オフラインモードは、FeatBit Serverに接続がない場合に使用すべきです。また、クライアントが受け取るデータと、それにアクセスするために使用できる環境キーを完全に制御する必要がある場合にも使用できます。
+
+このモードはFeatBit Serverに接続しないため、機能フラグ、セグメント、および環境キーのJSONダンプが必要です。FeatBit ServerにこのダンプをFeatBit Agentインスタンスに送信するように設定するには、FeatBit UIでリレープロキシを作成するか、データを含むダンプファイルでエージェントを起動する必要があります。

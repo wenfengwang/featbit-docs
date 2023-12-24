@@ -1,0 +1,80 @@
+import { Callout } from 'nextra/components'
+
+# 1. 2つのフィーチャーフラグを作成する
+
+このトピックでは、デモ「Dino Game」用のフィーチャーフラグを作成する方法を学びます。
+
+## 前提条件
+
+[Dockerインストール](../installation/full-installation.md)を通じてFeatBitが正常にインストールされていることを前提としています。
+
+## ポータルにログインする
+
+フィーチャーフラグを作成する前に、ポータルにログインする必要があります。ブラウザを開き、[`http://localhost:8081/`](http://localhost:8081/)のウェブサイトを開きます。デフォルトのユーザー名とパスワードは以下の通りです：
+
+* ユーザー名: test@featbit.com
+* パスワード: 123456
+
+![「ログイン」ページ。](../getting-started/assets/create-2-feature-flag/001-login.png)
+
+初めてログインする場合は、以下のガイドに従って組織とプロジェクトを指定する必要があります。「完了」ボタンをクリックして、このステップを終了します。
+
+![「組織の初期化」ページ。](../getting-started/assets/create-2-feature-flag/002-init-org.webp)
+
+上記のプロセスを完了すると、フィーチャーフラグリストページにリダイレクトされます。オンボーディングガイドが表示されます（下の画像を参照）。
+
+![「オンボーディング」ダイアログ。](../getting-started/assets/create-2-feature-flag/003.webp)
+
+## デモ用に2つのフラグを作成する
+
+### 1. 「game runner」フィーチャーフラグを作成する
+
+フラグリストで、**Add**ボタンをクリックし、フィーチャーフラグの名前として「**game runner**」を入力します。
+
+<Callout type="info" emoji="ℹ️">
+  このフィーチャーフラグは、後続のトピックで使用されますので、以下の画像と同じ情報を持っていることを確認してください。フラグのキーは大文字と小文字を区別します。
+</Callout>
+
+![「game runner」フラグダイアログの作成。](../getting-started/assets/create-2-feature-flag/004.webp)
+
+「Save」ボタンをクリックしてフィーチャーフラグを作成すると、「game runner」のフィーチャーフラグ詳細ページが表示されます。
+
+![「game runner」の詳細ページ。](../getting-started/assets/create-2-feature-flag/005.webp)
+
+> フラグを使ったユーザーターゲティングについての詳細は、[Targeting users with flags](../feature-flags/targeting-users-with-flags/)の記事をご覧ください。
+
+### 2. 「difficulty mode」フィーチャーフラグを作成する&#x20;
+
+フラグリストに戻り、新しいフィーチャーフラグを作成し、「**difficulty mode**」と名付けます。
+
+<Callout type="info" emoji="ℹ️">
+  このフィーチャーフラグは、後続のトピックで使用されますので、以下の画像と同じ情報を持っていることを確認してください。フラグのキーは大文字と小文字を区別します。
+</Callout>
+
+![「difficulty mode」フラグダイアログの作成。](../getting-started/assets/create-2-feature-flag/006.webp)
+
+このフィーチャーフラグのターゲティングページで、左サイドパネルのフラグバリエーションエリアを見つけます。
+
+#### 1. バリエーション値を編集するために
+
+* 編集モードに入る
+* `true`の値を`hard`に変更する
+* `false`の値を`easy`に変更する
+* `normal`という値の新しいバリエーションを追加する
+
+#### 2. `DateType`を`boolean`から`string`に変更する
+
+![フラグバリエーションの変更。](../getting-started/assets/create-2-feature-flag/007.webp)
+
+#### 3. 保存ボタンをクリックして変更を保存する。
+
+変更されたバリエーションが以下のように表示されます：
+
+1. デフォルトルールセクションの戻り値が`true`から`hard`に変更される
+2. フィーチャーフラグがOFFの場合の戻りバリエーションが`false`から`easy`に変更される
+
+![バリエーション変更後に保存された後。](../getting-started/assets/create-2-feature-flag/008.png)
+
+## 次へ
+
+**おめでとうございます**、これで2つのフィーチャーフラグの作成に成功しました。次のトピック「[Try interacting with the demo](try-interacting-with-the-demo.md)」でこれらのフィーチャーフラグを使用する方法を学びます。

@@ -1,0 +1,81 @@
+import { Callout } from 'nextra/components'
+
+# 针对性的渐进式交付
+
+> **针对性的渐进式交付**
+>
+> 这些技术让团队能够在不破坏现有系统的情况下快速迭代。FeatBit 支持精确的用户定位和功能标志规则，使得可以实施各种针对性的发布策略：环形部署、百分比部署、金丝雀发布等。这些渐进的、增量式的发布策略，相比于一次性的大规模瀑布式发布，风险要小得多。采用针对性的渐进式交付技术，可以加快编码速度、降低风险，并持续提升客户体验。
+
+## 先决条件
+
+我们假设你已经完成了“入门”系列的最后三个教程：
+
+* 你已经在教程[为演示创建 2 个功能标志](../create-two-feature-flags.md)中成功创建了两个功能标志：`game runner` 和 `difficulty mode`。
+* 你已经有了基本的体验，知道如何[与“`Dino Game`”演示互动](../try-interacting-with-the-demo.md)。
+* 你知道如何[连接 SDK](../connect-an-sdk/) 到你的程序或“Dino Game”演示：
+  * 下载演示代码样例
+  * 初始化 SDK
+  * 用自定义属性标识用户
+  * 实现一个功能标志来交付和控制功能
+
+## 渐进式发布游戏
+
+在生产环境中测试“恐龙游戏”后，你可能仍然担心游戏能否正确运行。为了避免对所有用户造成影响，你可以渐进式地发布你的功能。默认情况下，你计划按以下步骤发布功能：
+
+1. 一开始发布给 5% 的用户
+2. 如果前 5% 的用户没有发现问题，则扩大到 20%
+3. 如果前 20% 的用户没有明显问题，则扩大到 50%
+4. 如果前 50% 的用户没有明显问题，则全面发布给 100% 的用户
+
+为了实现这一点，你只需要修改默认规则以设置“发布百分比”，然后比如将 10% 设置为 `true`，90% 设置为 `false`。
+
+![](../../getting-started/assets/targeted-progressive-delivery/001.webp)
+
+这意味着 10% 的用户将会接收到变体 `true`，而 DinoGame 将会对这些接收到 `true` 变体的用户进行发布。
+
+![](../../getting-started/assets/targeted-progressive-delivery/002.webp)
+
+当你在发布过程中遇到负面反馈（bug）时，你可以通过重新分配发布百分比来立即回滚你的功能发布。
+
+<Callout type="info">
+  发布百分比算法是一个正态随机分布算法，基于用户 ID 来计算。
+
+  ![](../../getting-started/assets/targeted-progressive-delivery/003.webp)
+</Callout>
+
+## 渐进式发布到一个组织
+
+有时候，你可能只想对特定的组织渐进式发布，而不是对所有用户。你可以在“规则”部分创建一个规则来实现这一目标。
+
+### 为规则创建用户属性
+
+首先，你需要在 Portal 中创建规则属性。前往“终端用户”页面，点击“属性”按钮。
+
+![](../../getting-started/assets/targeted-progressive-delivery/004.webp)
+
+添加一个新的属性名为“orgId”，然后点击“保存”来创建它。
+
+![](../../getting-started/assets/targeted-progressive-delivery/005.webp)
+
+你可以为你创建的属性添加预定义的值。
+
+![](../../getting-started/assets/targeted-progressive-delivery/006.webp)
+
+### 将属性和值传递给系统（仅限开发者）
+
+确保当初始化 SDK 时，属性“orgId”及其值已经传递给了 FeatBit 系统。确保你在预设值（上图所示）中设置的键与你在 SDK 初始化代码中传递的键相同。
+
+![](../../getting-started/assets/targeted-progressive-delivery/007.webp)
+
+FeatBit 系统将会比较通过 SDK 传递的属性及其值与你在 Portal 中配置的属性和值。
+
+### 对 AA 公司渐进式发布
+
+回到“game runner”功能标志的“定位”页面。使用你刚创建的属性“orgId”创建一个规则。你需要做的是：
+
+1. 添加一个新规则，并为其命名（例如，对 AA 公司渐进式发布）。
+2. 添加一个条件，如果用户的“orgId”在列表中，那么这个用户有 10% 的概率接收到 `true` 变体。
+
+![](../../getting-started/assets/targeted-progressive-delivery/008.webp)
+
+根据我们上面设置的规则，DinoGame 将会对 AA 公司的 10% 用户进行发布。当你在发布过程中遇到负面反馈（bug）时，你可以通过重新分配发布百分比来立即回滚你的功能发布。

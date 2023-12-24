@@ -1,0 +1,54 @@
+import { Callout } from 'nextra/components'
+
+# 功能标志列表
+
+## 概览
+
+本主题解释如何使用功能标志列表，该列表展示了您的功能标志，并提供创建、修改和管理它们的选项。
+
+## 查看功能标志
+
+所有的功能标志**在一个环境中**都会显示在标志列表上。创建新标志会将其添加到列表，而归档标志则会将其从列表中移除。您可以使用搜索栏根据名称、key、标签或状态来查找标志。
+
+默认情况下，最近更新的标志会首先显示，而归档的标志**不会**显示在列表中。要查看归档的标志列表，您需要勾选'Archived'复选框。
+
+这是功能标志列表的图片：&#x20;
+
+![](../../feature-flags/assets/organizing-flags/the-flags-list/001.webp)
+
+## 创建功能标志
+
+要创建一个功能标志：
+
+1. 导航至标志列表。
+2. 点击 **Add** 按钮。"新功能标志"对话框会出现。
+3. 输入一个独一无二的、易于理解的Name。
+4. 点击 **Save** 按钮。
+
+![](../../feature-flags/assets/organizing-flags/the-flags-list/002.webp)
+
+<Callout type="info">
+**注意：** 当您输入Name时，一个建议的key会自动生成，您将使用这个key在代码中引用标志。保存标志key之后，您 **不能修改** 它。但是，您可以随时更改标志的Name。
+</Callout>
+
+您刚刚创建了一个功能标志。它会出现在列表中。
+
+## 复制功能标志
+
+要从一个环境复制标志到另一个环境：
+
+1. 导航至标志列表。
+2. 选择您希望复制的标志。
+3.  将鼠标悬停在溢出菜单按钮上，选择 **Copy to environment**。
+
+![](../../feature-flags/assets/organizing-flags/the-flags-list/003.webp)
+
+4.  再次确认所选标志，然后选择标志将要复制到的目标环境。
+
+![](../../feature-flags/assets/organizing-flags/the-flags-list/004.webp)
+
+5. 点击 **Ok** 按钮。
+
+<Callout type="warning">
+**注意：目标用户和规则不会被复制。** 这是因为您的某些规则可能引用了在目标环境中不存在的segment，而目标用户也可能在目标环境中不存在。
+</Callout>

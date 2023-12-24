@@ -1,0 +1,149 @@
+import { Callout } from 'nextra/components'
+
+# 使用 API 检索功能标志
+
+本文档提供了在目标 SDK 不可用时，如何直接从服务器检索功能标志的全面指南。
+
+评估服务器提供了两个 API，使您可以轻松地为客户端和服务器端平台检索特定环境下的功能标志。
+
+客户端 SDK 和服务器端 SDK 的区别包括：
+
+* 客户端 SDK 面向单一用户，而服务器端 SDK 面向多用户
+* 客户端 SDK 依赖评估服务器来评估所有标志，而服务器端 SDK 在本地评估标志
+
+<Callout type="info" emoji="ℹ️">
+请注意，您需要将 API 请求中的 `{Host}` 替换为您环境的适当主机 URL。`{Host}` 可以是评估服务器主机或 FeatBit Agent 主机，两者都提供相同的 API。
+</Callout>
+
+## 客户端
+
+对于客户端请求，请在 `Authorization` 头中提供客户端环境密钥。
+
+**请求**
+
+```bash
+curl -X POST {Host}/api/public/sdk/client/latest-all \
+-H 'Content-Type: application/json' \
+-H 'Authorization: client-env-secret' \
+-d '{
+    "keyId": "bot-id",
+    "name": "bot",
+    "customizedProperties": [
+        {
+            "name": "level",
+            "value": "high"
+        },
+        {
+            "name": "location",
+            "value": "us"
+        }
+    ]
+}'
+```
+
+**响应**
+
+```json
+[
+    {
+       "id":"hello-world",
+       "variation":"true",
+       "variationType":"boolean"
+    }
+]
+```
+
+## 服务器端
+
+对于服务器端请求，请在 `Authorization` 头中提供服务器环境密钥。
+
+**请求**
+
+```bash
+curl -H "Authorization: server-env-secret" {Host}/api/public/sdk/server/latest-all
+```
+
+**响应**
+
+```json
+{
+   "messageType":"data-sync",
+   "data":{
+      "eventType":"full",
+      "featureFlags":[
+         {
+            "envId":"1331554d-98c4-41fe-ade4-68e6f5eeb54a",
+            "name":"hello world",
+            "key":"hello-world",
+            "variationType":"boolean",
+            "variations":[
+               {
+                  "id":"bbe8f444-090e-4a3b-99fa-b487bab424aa",
+                  "value":"true"
+               },
+               {
+                  "id":"cf8f9626-0d6f-4d05-a98f-8c3a50c85d0f",
+                  "value":"false"
+               }
+            ],
+            "targetUsers":[
+               
+            ],
+            "rules":[
+               
+            ],
+            "isEnabled":true,
+            "disabledVariationId":"cf8f9626-0d6f-4d05-a98f-8c3a50c85d0f",
+            "fallthrough":{
+               "dispatchKey":null,
+               "includedInExpt":true,
+               "variations":[
+                  {
+                     "id":"bbe8f444-090e-4a3b-99fa-b487bab424aa",
+                     "rollout":[
+                        0,
+                        1
+                     ],
+                     "exptRollout":1
+                  }
+               ]
+            },
+            "exptIncludeAllTargets":true,
+            "tags":[
+               
+            ],
+            "isArchived":false,
+            "disabledVariation":{
+               "id":"cf8f9626-0d6f-4d05-a98f-8c3a50c85d0f",
+               "value":"false"
+            },
+            "creatorId":"b58fa8fd-eca2-460a-ab0f-e7758dbcec6a",
+            "updatorId":"b58fa8fd-eca2-460a-ab0f-e7758dbcec6a",
+            "createdAt":"2023-03-16T09:11:23.739Z",
+            "updatedAt":"2023-03-16T09:11:26.0465535Z",
+            "id":"4daca70f-86ae-4468-aee8-afc700977202"
+         }
+      ],
+      "segments":[
+         {
+            "envId":"1331554d-98c4-41fe-ade4-68e6f5eeb54a",
+            "name":"beta users",
+            "description":"这是一个针对 beta 用户的细分市场",
+            "included":[
+               
+            ],
+            "excluded":[
+               
+            ],
+            "rules":[
+               
+            ],
+            "isArchived":false,
+            "createdAt":"2023-03-16T09:18:21.1317917Z",
+            "updatedAt":"2023-03-16T09:18:21.1317248Z",
+            "id":"b2b91bbe-5d54-4d8a-882f-afc700995b23"
+         }
+      ]
+   }
+}
+```

@@ -1,0 +1,34 @@
+import { Callout } from 'nextra/components'
+
+# 针对个体用户的特性标记
+
+## 概览 <a href="#overview" id="overview"></a>
+
+本主题介绍如何使用特性标记的**目标**选项卡来控制哪些个体用户接收特性标记的不同变体。
+
+## 将用户分配给一个变体 <a href="#assigning-users-to-a-variation" id="assigning-users-to-a-variation"></a>
+
+**目标**选项卡下的“针对用户”部分允许您将单个用户分配给特定的特性标记变体。
+
+> 仅针对少量用户进行个体定位
+>
+> 我们建议仅对极少数个体用户进行个体定位。每个变体针对超过100个用户进行个体定位可能会导致性能下降。
+
+如果您的应用程序已经开始向FeatBit回传数据，您可以通过名称或用户键来搜索用户。这些字符串是区分大小写的。将鼠标悬停在用户行上，可以查看该用户的更多属性。
+
+如果您需要针对FeatBit尚未识别的用户，您可以手动输入他们的键。这些用户会以黄色显示，直到他们遇到一个特性标记。
+
+在下面的屏幕截图中，特定用户正在接收一个特性标记的第一种变体。这个特性标记是针对他们设置的。这意味着这些用户在访问该特性标记时将接收到这种变体。
+
+![](../../feature-flags/assets/targeting-users-with-flags/individual-user-targeting/001.webp)
+
+## 移除被针对的用户 <a href="#removing-targeted-users" id="removing-targeted-users"></a>
+
+您可以通过点击用户的名字来将他们从特性标记的针对列表中移除。要做到这一点，请：
+
+1. 导航至特性标记的**目标**选项卡。
+2. 在“针对用户”部分，找到您希望移除的用户的名字。
+3. 点击他们名字旁边的**X**来将他们移除：
+
+![](../../feature-flags/assets/targeting-users-with-flags/individual-user-targeting/002.webp)
+

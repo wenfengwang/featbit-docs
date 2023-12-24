@@ -1,0 +1,80 @@
+import { Callout } from 'nextra/components'
+
+# 1. 创建两个特性标志
+
+在本主题中，您将学习如何为演示“恐龙游戏”创建特性标志。
+
+## 先决条件
+
+我们假设您已经通过 [Docker 安装](../installation/full-installation.md)成功安装了 FeatBit。
+
+## 登录到门户
+
+在创建特性标志之前，必须登录到门户。打开浏览器，然后打开网站 [`http://localhost:8081/`](http://localhost:8081/)。默认用户名和密码为：
+
+* 用户名： test@featbit.com
+* 密码：123456
+
+![“登录”页面。](../getting-started/assets/create-2-feature-flag/001-login.png)
+
+如果这是您第一次登录，您需要通过以下指南指定您的组织和项目。点击“完成”按钮以完成此步骤。
+
+![“初始化组织”页面。](../getting-started/assets/create-2-feature-flag/002-init-org.webp)
+
+完成上述过程后，您将被重定向到特性标志列表页面。您将看到一个入职指南（如下图所示）。
+
+![“入职”对话框。](../getting-started/assets/create-2-feature-flag/003.webp)
+
+## 为演示创建两个标志
+
+### 1. 创建一个名为“game runner”的特性标志
+
+在标志列表中，点击 **Add** 按钮，然后输入“**game runner**”作为特性标志的名称。
+
+<Callout type="info" emoji="ℹ️">
+  此特性标志将在后续主题中使用，请确保您具有与下图相同的信息。标志的键是区分大小写的。
+</Callout>
+
+![创建“game runner”标志对话框。](../getting-started/assets/create-2-feature-flag/004.webp)
+
+点击“保存”按钮创建特性标志，然后您将看到特性标志“game runner”的详细信息页面。
+
+![“game runner”详细信息页面。](../getting-started/assets/create-2-feature-flag/005.webp)
+
+> 请参阅文章 [使用特性标志定位用户](../feature-flags/targeting-users-with-flags/) 以获取有关“定位”选项卡的更多信息。
+
+### 2. 创建一个名为“difficulty mode”的特性标志
+
+返回到特性标志列表，创建一个特性标志，并将其命名为“**difficulty mode**”。
+
+<Callout type="info" emoji="ℹ️">
+  此特性标志将在后续主题中使用，请确保您具有与下图相同的信息。标志的键是区分大小写的。
+</Callout>
+
+![创建“difficulty mode”标志对话框。](../getting-started/assets/create-2-feature-flag/006.webp)
+
+在此特性标志的定位页面中，找到左侧面板上的标志变体区域。
+
+#### 1. 编辑变体值
+
+* 进入编辑变体模式
+* 将 `true` 的值修改为 `hard`
+* 将 `false` 的值修改为 `easy`
+* 添加一个值为 `normal` 的新变体
+
+#### 2. 将 `DateType` 从 `boolean` 更改为 `string`
+
+![更改标志变体。](../getting-started/assets/create-2-feature-flag/007.webp)
+
+#### 3. 点击“保存”按钮以保存修改。
+
+您将看到返回的变体已更改：
+
+1. 默认规则部分的返回值从 `true` 更改为 `hard`
+2. 当特性标志为 OFF 时的返回变体从 `false` 更改为 `easy`
+
+![变体更改保存后。](../getting-started/assets/create-2-feature-flag/008.png)
+
+## 下一步
+
+**恭喜**，现在您已经成功创建了两个特性标志，您将在下一个主题[“尝试与演示互动”](try-interacting-with-the-demo.md)中学习如何使用这些特性标志。

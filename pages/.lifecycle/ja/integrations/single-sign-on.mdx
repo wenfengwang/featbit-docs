@@ -1,0 +1,96 @@
+import {Callout} from 'nextra/components'
+
+# シングルサインオン
+
+<Callout type="info">
+    この記事は、FeatBit 3.0.0 以降と互換性があります。
+</Callout>
+
+<Callout type="info">
+    シングルサインオン機能は、Enterpriseサブスクリプションをお持ちのお客様のみが利用できます。詳細は、[FeatBitプラン](https://dashboard.featbit.co/en)をご覧ください。試用ライセンスでもこの機能をお試しいただけます。試用ライセンスは[Featbitダッシュボード](https://dashboard.featbit.co/account)で生成できます。
+</Callout>
+
+SSOは、OpenID Connectを介してFeatBit Self-hostedで利用可能です。自己ホスト型のFeatBitインスタンスでSSOを有効にするには、有効なライセンスキーが必要です。そして、プロバイダーのSSO設定を追加することができます。
+
+## SSO設定
+
+SSOを有効にするためには、以下の設定を追加する必要があります。
+
+### FeatBit Apiサービスの環境変数を追加
+
+- `SSOEnabled`: SSOを有効にするには`true`に設定します。
+
+### UIを介してOpenID Connect設定を追加
+
+FeatBitが正常に起動したら、**http://localhost:8081/workspace** にアクセスし、以下の設定を追加します：
+
+- `clientId`: OIDCクライアントID。
+- `clientSecret`: OIDCクライアントシークレット。
+- `redirectUri`: OIDCリダイレクトURI。
+- `tokenEndpoint`: OIDCトークンエンドポイント。
+- `clientAuthenticationMethod`: OIDCクライアント認証方法。ほとんどの場合`client_secret_post`に設定しますが、`client_secret_basic`もサポートしています。
+- `authorizationEndpoint`: OIDC承認エンドポイント。
+- `scope`: 要求するOIDCスコープ。ほとんどの場合`openid profile email`に設定します。
+- `userEmailClaim`: OIDCユーザーのメールクレーム。上記のスコープを使用する場合は`email`に設定します。
+
+## 例
+
+FeatBit SSOは**Keycloak、Okta、Auth0**でテストされています。ここではKeycloakを例にステップバイステップガイドを紹介します。
+
+### 1. Keycloakを実行
+DockerからKeycloakを実行し、[localhost:9000](http://localhost:9000)で`admin`/`admin`を使用して管理コンソールにログインします。
+
+```bash
+docker run -d -p 9000:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin --name=keycloak quay.io/keycloak/keycloak:22.0.1 start-dev
+```
+
+### 2. レルムを作成
+
+`featbit`という新しいレルムを作成し、そのレルムに切り替えます。
+
+![](../integrations/assets/single-sign-on/create-realm.png)
+
+### 3. OIDCクライアントを作成
+
+以下の設定でOIDCクライアントを作成します。いくつかの重要な設定は：
+- クライアントの有効なリダイレクトURIをhttp://localhost:8081/*（FeatBit UIサービスアドレス）に設定します。
+- クライアントのWebオリジンをhttp://localhost:8081/*（FeatBit UIサービスアドレス）に設定します。
+- クライアント認証を有効にします。
+
+![](../integrations/assets/single-sign-on/client-settings.png)
+
+### 4. ユーザーを作成
+Keycloakでユーザーを作成し、そのユーザーにパスワードを設定します。
+
+### 5. FeatBitを起動
+
+`docker-compose.yml`でFeatBit Apiサービスのための以下の環境変数を設定します。
+
+```yaml
+SSOEnabled=true
+```
+
+FeatBitを起動すると、ログインページにSSOタブが表示されるはずです。
+```bash
+cd featbit
+docker-compose up -d
+```
+![](../integrations/assets/single-sign-on/sso-login.png)
+
+次に、`Login`タブをクリックして、デフォルトの資格情報`test@featbit.com`/`123456`でログインします。
+
+### 6. OIDC設定を構成
+
+**http://localhost:8081/workspace** にアクセスし、OpenID Connect設定を追加して「更新」をクリックし、**クライアントシークレット**をご自身の値に置き換えてください。
+
+![](../integrations/assets/single-sign-on/oidc-settings.png)
+
+### 7. SSOでログイン
+
+**一般設定**でワークスペースキーをコピーします。SSOでログインする際に必要です。
+
+![](../integrations/assets/single-sign-on/ws-key.png)
+
+ログアウトしてSSOをクリックし、先ほどコピーしたワークスペースキーを使用します。
+「続行」をクリックすると、ブラウザがKeycloakのログインページに移動し、そこで以前に作成したユーザーでログインできます。
+

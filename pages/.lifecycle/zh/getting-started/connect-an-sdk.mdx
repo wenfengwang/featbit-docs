@@ -1,0 +1,77 @@
+import { Callout } from 'nextra/components'
+
+# 3. 连接 SDK
+
+使用 SDK 是理解如何通过功能标志来交付、控制和测试软件的一项基本技能。
+
+在上一步“尝试与演示交互”中，你学习了如何使用功能标志来控制游戏组件的显示/隐藏，以及切换游戏的难度模式。现在，让我们来看看这是如何在代码中实现的。
+
+## 按照门户中的指南操作
+
+最简单的方法是按照门户上“入门”页面的指导进行操作。在门户中，你可以：
+
+**步骤 1**。选择你在上一步中创建的一个功能标志。然后点击“下一步”按钮，进入步骤 2。
+
+![](../getting-started/assets/connect-to-sdk/001.png)
+
+**步骤 2**。选择一种你熟悉的编程语言。复制自动生成的代码并在你的 IDE 中运行它。
+
+![](../getting-started/assets/connect-to-sdk/002.png)
+
+门户生成的代码包含所有必要的元素，例如：
+
+- SDK 安装
+- 使用服务器 URL、环境密钥初始化 SDK
+- 使用自定义属性识别用户
+- 功能标志实现
+- 功能标志评估 
+- 功能标志更新监听器
+- 等等
+
+![](../getting-started/assets/connect-to-sdk/003.png)
+
+
+## 手动连接 SDK
+
+我们提供了多种客户端、服务器端和移动 SDK 供您选择。你可以选择你擅长的语言来加速完成快速入门。
+
+<Callout type="info" emoji="👾">
+  我们建议你使用我们的 SDK，因为我们已经为你实现了最佳实践。
+</Callout>
+
+### JavaScript
+
+我们提供了客户端 [JavaScript/TypeScript SDK](https://github.com/featbit/featbit-js-client-sdk)。我们还提供了“恐龙游戏”的示例，适用于 [React](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-react) 和 [Vue](https://github.com/featbit/featbit-samples/tree/main/samples/dino-game/interactive-demo-vue)。该 SDK 与 TypeScript、React、Vue、Angular 等完美兼容。
+
+SDK 的 GitHub 仓库包含了如何使用它的完整教程。它还提供了一个示例项目供你尝试。
+
+### .NET
+
+我们提供了服务器端 [.NET SDK](https://github.com/featbit/featbit-dotnet-sdk) 供你使用。该 SDK 可以在你的控制台应用或 ASP.NET Core 应用中使用。
+
+它也可以用于前端应用，如 WPF、WinForm、MAUI 等。但我们不建议你在移动应用中使用它，因为它比专用的移动 SDK 更耗电。
+
+SDK 的 GitHub 仓库包含了如何使用它的完整教程。它还提供了一个示例项目供你尝试。
+
+### Java
+
+我们提供了 [Java SDK](https://github.com/featbit/featbit-java-sdk) 供你使用。该 SDK 可以在你的控制台应用或 Spring Boot 应用中使用。
+
+SDK 的 GitHub 仓库包含了如何使用它的完整教程。它还提供了一个示例项目供你尝试。
+
+### Python
+
+我们提供了 [Python SDK](https://github.com/featbit/featbit-python-sdk)。SDK 的 GitHub 仓库包含了如何使用它的完整教程。它还提供了一个示例项目供你尝试。
+
+### Go
+
+我们提供了 [Go SDK](https://github.com/featbit/featbit-go-sdk)。SDK 的 GitHub 仓库包含了如何使用它的完整教程。它还提供了一个示例项目供你尝试。
+
+
+### REST API 和 WebSocket
+
+对于我们尚未提供 SDK 的任何其他语言或框架，你可以使用我们的 REST API 来获取功能标志。请参阅[这里的文档](../api-docs/get-users-feature-flags-with-api)。
+
+你可以使用我们的 WebSocket 接口来实时获取功能标志更新。请加入我们的 Slack 频道以获取更多关于此功能的信息。
+
+

@@ -1,0 +1,48 @@
+import {Callout} from 'nextra/components'
+
+# ライセンスキーの設定
+
+<Callout type="info">この記事は、FeatBit 3.0.0 以降と互換性があります。</Callout>
+
+このガイドでは、ライセンスキーを使用してFeatBitを設定するプロセスについて説明します。
+
+## ワークスペースIDの取得
+
+ライセンスキーを取得する前に、ワークスペースIDが必要です。以下の手順に従ってください。
+
+1. FeatBitが実行されていること、そしてFeatBit UIが http://localhost:8081 で利用可能であることを確認してください。
+2. メールアドレスとパスワードを使用してFeatBitにログインします。デフォルト設定を使用する場合は、以下を使用してください：
+   - ユーザー名: test@featbit.com
+   - パスワード: 123456
+  
+3. http://localhost:8081/en/workspace にアクセスし、**ライセンス設定** セクションで、**コピー** ボタンをクリックしてください。
+   
+   ![](./assets/workspaceid.png)
+
+## 無料トライアルライセンスキーを取得する
+
+FeatBitの全機能を評価するために、[FeatBit Dashboard](https://dashboard.featbit.co/account)から無料トライアルライセンスキーを生成してください：
+
+- メールアドレスを使用してアカウントを作成するか、GitHubでログインしてください。
+- **アカウント**ページで**トライアルライセンス生成**をクリックしてください。
+
+  ![](./assets/request-trial-license1.png)
+- モーダルで、会社名とワークスペースIDを入力し、**OK**をクリックしてください。
+
+  ![](./assets/request-trial-license2.png)
+- ライセンステーブルで生成されたライセンスを探し、**コピー**をクリックしてください。
+
+  ![](./assets/request-trial-license3.png)
+
+## 商用ライセンスキーを取得する
+
+商用ライセンスキーについては、[contact@featbit.co](mailto:contact@featbit.co) までメールを送るか、[Slackチャンネル](https://join.slack.com/t/featbit/shared_invite/zt-1ew5e2vbb-x6Apan1xZOaYMnFzqZkGNQ)に参加してください。迅速に対応させていただきます。
+## ライセンスキーのアップロード
+
+再び http://localhost:8081/en/workspace に戻り、**ライセンス設定**セクションに進んで、先ほど取得したライセンスキーを入力し、**更新**をクリックしてください。
+
+![](./assets/save_license_key.png)
+
+保存後、エンタープライズボタンにマウスを合わせると、以下のようにライセンスの詳細が表示されます。
+
+![](./assets/check-license.png)

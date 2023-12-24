@@ -1,0 +1,57 @@
+import { Callout } from 'nextra/components'
+
+# Docker Composeを使用したインストール
+
+## 前提条件
+
+* Docker Engineバージョン **1.13.1+**
+* Docker Compose **1.27.0+**
+
+## インストール
+
+FeatBitには**Standard**と**Professional**の2つのプランがあります。適切なプランは、ビジネスの規模と特定のニーズによって異なります。一般的に、Standardプランは小規模ビジネスに、Professionalプランは中規模から大規模ビジネスに適しています。それらの違いについては[こちら](../tech-stack/standard-vs.-professional.md)で詳しく知ることができます。すべてのプランは、レジリエンス、スピード、Slackコミュニティへのアクセス、チームからのサポートを保証します。
+
+*   リポジトリをサーバーまたはローカルマシンにクローンし、サービスを起動します。
+
+    ```bash
+    git clone https://github.com/featbit/featbit
+    cd featbit
+
+    # Standardバージョンの場合は以下を実行
+    docker compose up -d
+
+    # Professionalバージョンの場合は以下を実行
+    docker compose -f docker-compose-pro.yml up -d
+    ```
+* すべてのコンテナが起動したら、FeatBitのポータル [http://localhost:8081](http://localhost:8081/) にアクセスし、デフォルトの認証情報を使用してログインします。
+  * ユーザー名: **test@featbit.com**
+  * パスワード: **123456**
+
+ソースコードからイメージをビルドし、コンテナを起動したい場合は、以下のように実行します。
+
+```sh
+# Standardバージョンの場合は以下を実行
+docker compose up -f docker-compose-dev.yml -d
+
+# Professionalバージョンの場合は以下を実行
+docker compose -f docker-compose-pro-dev.yml up -d
+```
+
+<Callout type="info">
+ProバージョンのDocker Composeファイルには、システムに必要なKafkaトピックを作成する**init-kafka-topics**という「一度だけ実行」のサービスが含まれています。このサービスは1回だけ実行して終了することを意図しているため、このサービスがExited状態であっても問題ありません。
+</Callout>
+
+## アップデート
+
+最新のFeatBitイメージに更新するには、以下のコマンドを実行します。
+
+```bash
+docker-compose pull
+docker-compose rm -fsv featbit
+docker-compose up -d
+```
+
+## FAQ
+
+* [Dockerコンテナのポート競合問題を解決する方法は？](faq.md#how-to-solve-docker-container-port-conflict-problem)
+* [FeatBitポータルを公開アクセス可能にする方法は？](faq.md#how-to-make-featbit-portal-accessible-publicly)

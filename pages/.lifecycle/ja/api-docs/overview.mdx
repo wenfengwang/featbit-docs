@@ -1,0 +1,52 @@
+import { Callout } from 'nextra/components'
+
+# API
+
+<Callout type="info">
+この記事は、FeatBit REST APIへのリクエスト方法についての一般的な紹介です。APIの完全なリストと各APIの使用方法については、redocを活用したドキュメントを[こちら](https://featbit-tio-eu-api.azurewebsites.net/docs/index.html)で参照できます。FeatBitをローカルまたはサーバー上で実行している場合は、URL: <strong>URL\_OF\_API\_SERVER/docs</strong> にアクセスしてください。例えば、HTTPSを使用せずにローカルマシンでFeatBitを実行している場合、URLは <strong>http://localhost:5000/docs</strong> となります。
+</Callout>
+
+### 認証
+
+すべてのREST APIリソースは、[個人またはサービスアクセストークン](../integrations/api-access-tokens.md)で認証されます。他の認証メカニズムはサポートされていません。個人アクセストークンは**インテグレーション/アクセストークン**ページで管理できます。
+
+#### リクエストヘッダーを使用した認証
+
+APIで認証する唯一の方法は、`Authorization`ヘッダーにアクセストークンを含めてリクエストに追加することです。`Authorization`ヘッダーの値はアクセストークンでなければなりません。このヘッダーを追加する方法については、[FeatBit REST APIの使用](using-featbit-rest-api.md)を参照してください。
+
+### 表現
+
+すべてのリソースはJSONレスポンスボディを期待し、返します。エラーレスポンスもJSONボディを送信します。APIのエラーフォーマットについては、[エラー](overview.md#errors)を読んでください。
+
+実際には、常に`Content-Type`ヘッダーが`application/json`に設定されたレスポンスが返されることを意味します。
+
+加えて、`PATCH`、`POST`、`PUT`リクエストのリクエストボディは、`Content-Type`ヘッダーが`application/json`に設定されたJSONとしてエンコードされなければなりません。
+
+### エラー
+
+APIは常に共通のフォーマットでエラーを返します。以下はその例です：
+
+```json
+{
+    "success": false,
+    "errors": [
+        "Unauthorized"
+    ],
+    "data": null
+}
+```
+
+**errors**はエラーの一般的なカテゴリーを示します。
+
+### CORS
+
+FeatBit APIは、任意のオリジンからのAJAXリクエストに対してCross-Origin Resource Sharing (CORS) をサポートしています。リクエストに`Origin`ヘッダーが含まれている場合、それは明示的に許可されたオリジンとしてエコーされます。それ以外の場合は、リクエストはワイルドカード`Access-Control-Allow-Origin: *`を返します。CORSについての詳細は、[CORS W3C勧告](http://www.w3.org/TR/cors)を読んでください。CORSヘッダーの例は以下の通りです：
+
+```
+Access-Control-Allow-Headers: Accept, Content-Type, Content-Length, Accept-Encoding, Authorization
+Access-Control-Allow-Methods: OPTIONS, GET, DELETE, PATCH
+Access-Control-Allow-Origin: *
+Access-Control-Max-Age: 300
+```
+
+認証済みのCORSコールは、同一オリジンのコールと同様に、アクセストークン認証を使用して行うことができます。アクセストークンを信頼できないエンティティに公開してはいけません。
