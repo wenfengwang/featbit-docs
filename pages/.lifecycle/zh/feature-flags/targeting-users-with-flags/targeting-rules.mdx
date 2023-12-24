@@ -1,0 +1,138 @@
+import { 提示 } from 'nextra/components'
+
+# 定位规则
+
+## 概述 <a href="#overview" id="overview"></a>
+
+本主题将解释如何使用定位规则根据用户的内置和自定义用户属性来定位用户细分。
+
+## 创建定位规则 <a href="#creating-targeting-rules" id="creating-targeting-rules"></a>
+
+定位规则可以包含一个或多个条件。
+
+每个条件包括三个部分：
+
+* 内置或自定义**用户属性**，用于定义条件的影响范围，例如仅定位到电子邮件地址。要了解更多信息，请阅读[用户属性](targeting-rules.mdx#user-attributes)。
+* 一个**运算符**，用于设置属性的区分特征，例如将条件限制为以特定扩展名结尾的电子邮件。如果条件指定了运算符要跟踪的多个值，则运算符将遍历数组。要了解详细信息，请阅读[运算符](targeting-rules.mdx#operators)。
+* 一个**值**，它通过您指定的值来标识属性，例如 `gmail.com`。
+
+以下是用户定位规则的图像：
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/001.webp)
+
+要创建一个规则，向所有以 `gmail.com` 结尾的电子邮件地址提供 `true` 服务：
+
+1. 单击**添加规则**图标。
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/002.webp)
+
+2. 输入规则的名称。
+3. 从**选择属性**菜单中选择`email`。
+4. 从**选择操作员**菜单中选择`ends with`。
+5. 在**值**字段中输入`gmail.com`。
+6. 从**服务**菜单中选择`true`。
+7. 点击**保存**。
+
+如果定位规则引用任何具有`null`值的自定义属性，则标志将跳过该规则。
+
+您可以向规则添加多个条件。以下是规则如何处理多个条件和值：
+
+* 用户必须满足规则中的所有条件才能匹配该规则。如果不满足任何条件，用户将不匹配规则。
+* 如果条件具有多个值，则 FeatBit 认为只要有一个值匹配即满足条件。
+
+#### 百分比推出 <a href="#percentage-rollouts" id="percentage-rollouts"></a>
+
+如果您只希望与规则匹配的部分用户接收特定变体，则可以提供百分比推出。
+
+以下是百分比推出部分的图像：
+
+在此示例中，25% 的用户将收到变体 `true`。
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/003.webp)
+
+要了解更多信息，请参阅[百分比推出](percentage-rollouts.md)。
+
+#### 实验 <a href="#experimentation" id="experimentation"></a>
+
+保存定位规则后，您可以单击**设置 A/B 测试规则**按钮对该规则运行实验。要了解更多信息，请参阅[创建实验](../../experimentation/creating-experiments.md)。
+
+以下是标志定位规则上的**设置 A/B 测试规则**按钮的图像：
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/004.webp)
+
+#### 用户属性 <a href="#user-attributes" id="user-attributes"></a>
+
+FeatBit 包括用户的内置属性。以下是一些常见用户属性的示例：
+
+* `keyId`
+* `name`
+
+有关内置用户属性的完整列表，请参阅[内置用户属性](../users-and-user-segments/user-attributes.md)。
+
+FeatBit 还允许您创建自定义用户属性。例如，您可能希望根据计划、组、角色、位置或组织来定位用户。使用自定义用户属性，您可以向常规计划中的用户显示某些功能，并向高级计划中的用户显示其他功能。或者，您可以向 30% 的组织（而不是 30% 的用户）推出新功能。
+
+要了解更多信息，请参阅[用户属性](../users-and-user-segments/user-attributes.md)。
+
+#### 运算符 <a href="#operators" id="operators"></a>
+
+FeatBit 支持以下运算符：
+
+| 运算符 | 属性类型 | 意义 |
+| ------------------------------------ | ------------- | ------------ |
+| 是其中之一 `=`，不是其中之一 `!=`  | 字符串、数字、布尔值、日期 | 完全匹配 |
+| 结尾为，不以 结尾 | 字符串 | 字符串后缀匹配 |
+| 开头为，不开头为 | 字符串 | 字符串前缀匹配 |
+| 匹配，不匹配 | 字符串 | 正则表达式匹配 |
+| 包含，不包含 | 字符串 | 子字符串匹配 |
+| 大于 `>`，小于 `<`，大于或等于 `>=`，小于或等于 `<=` | 数字 | 数值比较 |
+| 用户在区段中，用户不在区段中 | 区段名称 | 用户被指定细分受众群的定位规则包含或排除。要了解更多信息，请参阅[用户细分](../users-and-user-segments/user-segments)。 |
+
+## 设置默认规则 <a href="#setting-the-default-rule" id="setting-the-default-rule"></a>
+
+FeatBit 为不匹配页面上任何定位规则的任何用户定义了最终的默认规则。与其他规则一样，您可以选择投放特定变体，或对任何剩余用户应用百分比推出。
+
+以下是百分比推出部分的图像：
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/005.webp)
+
+现在，未被任何其他规则针对的所有用户中有 30% 将收到 `true`。
+
+如果您不想根据用户密钥或任何自定义属性来定位用户，则可以使用默认规则来控制所有用户的标志推出。
+
+## 设置默认关闭变体 <a href="#setting-the-default-off-variation" id="setting-the-default-off-variation"></a>
+
+关闭切换开关后，FeatBit 将为功能标志提供默认的关闭变体。对于布尔标志，默认的 off 变体设置为 `false`。对于多变量标志，您可以选择一个自定义变体。您可以在**定位**选项卡中自定义布尔标志和多变量标志的默认关闭变体。
+
+## 评估顺序 <a href="#evaluation-order" id="evaluation-order"></a>
+
+**定位** 选项卡按以下顺序评估规则：
+
+### 如果功能已打开
+
+1. 针对单个用户定位 \
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/006.webp)
+   1. 第一个变体
+   2. 第二个变体
+   3. 第三个变体
+   4. ...
+2. 针对用户自定义规则定位\
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/007.webp)
+   1. UI 中显示的第一个规则
+   2. UI 中显示的第二个规则
+   3. UI 中显示的第三个规则
+   4. ...
+3. 通过**默认规则**中的配置定位剩余用户
+
+<提示 type="info">
+如果用户匹配多个规则，则应用第一个匹配规则。
+可以通过单击规则的左边缘并向上或向下拖动来重新排序自定义规则。
+</提示>
+
+### 如果功能已关闭
+
+提供预定义的 off 部分变体\
+
+![](../../feature-flags/assets/targeting-users-with-flags/targeting-rules/008.webp)
+
+
+

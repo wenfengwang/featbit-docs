@@ -1,0 +1,81 @@
+import { 提示 } from 'nextra/components'
+
+# 有针对性的渐进式交付
+
+> **有针对性的渐进式交付**
+>
+> 它们让团队有信心快速行动，而不会出现问题。FeatBit 允许精确地定位用户和设置功能标志规则，从而打开了各种有针对性的部署方式：环形部署、百分比部署、金丝雀发布等。这些有针对性的增量发布策略或发布进度涉及的风险远低于大爆炸式的瀑布发布。采用有针对性的渐进式交付技术，可以加快编码速度，降低风险，并持续改善客户体验。
+
+## 先决条件
+
+我们假设您已经完成了“入门”中的最后三个教程：
+
+* 您已成功创建了两个功能标志，在教程[为演示创建2个标志](../create-two-feature-flags.md)中分别为 `game runner` 和 `difficulty mode`。
+* 您对如何与“Dino Game”演示进行交互有基本经验，可以参考[尝试与演示进行交互](../try-interacting-with-the-demo.md)。
+* 您知道如何将 SDK 连接到您的程序或“Dino Game”演示：
+  * 下载演示代码示例
+  * 初始化 SDK
+  * 识别具有自定义属性的用户
+  * 实现功能标志以交付和控制功能
+
+## 逐步发布游戏
+
+在生产环境中测试我们的“Dino Game”后，您可能仍然担心游戏是否能够正常运行。为了避免所有用户都遇到问题，您可以逐步发布您的功能。默认情况下，您计划以以下速度发布该功能：
+
+1. 开始时为5%
+2. 如果前5%的用户没有错误，那么将扩大到20%
+3. 如果前20%的用户没有明显的错误，那么将扩大到50%
+4. 如果前50%的用户没有明显的错误，那么将扩大到100%
+
+为了实现这一点，您只需要修改默认规则以提供“推出百分比”，然后例如将10%分配给 `true`，将90%分配给 `false`。
+
+![](../../getting-started/assets/targeted-progressive-delivery/001.webp)
+
+这意味着10%的用户将收到 `true` 变体，而 DinoGame 将发布给那些收到真正变体的用户。
+
+![](../../getting-started/assets/targeted-progressive-delivery/002.webp)
+
+每当在发布过程中遇到更糟糕的反馈（bug）时，您可以通过重新分配推出百分比立即回滚功能版本。
+
+<提示 type="info">
+  推出百分比算法是一种正态随机分布算法，基于最终用户 ID 进行计算。
+
+  ![](../../getting-started/assets/targeted-progressive-delivery/003.webp)
+</提示>
+
+## 逐步发布到组织
+
+有时，您可能只想逐步发布给特定组织，而不是所有用户。您可以在“规则”部分创建一个规则来实现这一点。
+
+### 为规则创建用户属性
+
+首先，您需要在门户中创建规则属性。转到“最终用户”页面，单击“属性”按钮。
+
+![](../../getting-started/assets/targeted-progressive-delivery/004.webp)
+
+添加一个名为“orgId”的新属性，然后单击“保存”进行创建。
+
+![](../../getting-started/assets/targeted-progressive-delivery/005.webp)
+
+您可以为创建的属性添加预定义值。
+
+![](../../getting-started/assets/targeted-progressive-delivery/006.webp)
+
+### 将属性和值传递给系统（仅供开发人员使用）
+
+请确保在初始化 SDK 时已将属性“orgId”和值传递给 FeatBit 系统。确保在 SDK 初始化代码中设置的键与预设值（上图）中的键相同。
+
+![](../../getting-started/assets/targeted-progressive-delivery/007.webp)
+
+FeatBit 系统将通过 SDK 传递的属性及其值与在门户中配置的属性和值进行比较。
+
+### 逐步发布给 AA 公司
+
+返回“Game Runner”功能标志的“定位”页面。使用您刚刚创建的属性“orgId”创建规则。您需要：
+
+1. 添加一个名称（例如，逐步发布给 AA 公司）的新规则。
+2. 添加一个条件，如果用户的“orgId”在列表中，则该用户有10%的机会收到 `true` 变体。
+
+![](../../getting-started/assets/targeted-progressive-delivery/008.webp)
+
+根据我们上面设定的规则，DinoGame 将向 AA 公司的10%用户发布。每当在发布过程中遇到更糟糕的反馈（bug）时，您可以通过重新分配推出百分比立即回滚功能版本。
